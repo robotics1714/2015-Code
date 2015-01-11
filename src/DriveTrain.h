@@ -4,12 +4,14 @@
 #include "MORESubsystem.h"
 #include "RobotDrive.h"
 #include "Gyro.h"
+#include "Timer.h"
 
 class DriveTrain : public MORESubsystem
 {
 private:
 	RobotDrive* drive;
 	Gyro* gyro;
+	Timer* autoTimer;
 
 public:
 	//Define the auto flags
