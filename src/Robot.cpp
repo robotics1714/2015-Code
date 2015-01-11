@@ -1,4 +1,6 @@
+#include <MORESubsystem.h>
 #include "WPILib.h"
+#include "AutoStep.h"
 
 class Robot: public IterativeRobot
 {
