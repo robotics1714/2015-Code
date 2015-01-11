@@ -1,0 +1,7 @@
+*.cproject
+*.project
+*.o
+*.properties
+*.xml
+/Debug
+/.settings
