@@ -6,17 +6,22 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
 	gyro = scope;
 	autoTimer = new Timer();
+
+	drive->SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
+	drive->SetInvertedMotor(RobotDrive::kRearRightMotor, true);
 }
 
 DriveTrain::~DriveTrain()
 {
 	delete drive;
 	delete gyro;
+	delete autoTimer;
 }
 
 void DriveTrain::Drive(float x, float y, float rot)
 {
-	drive->MecanumDrive_Cartesian(x, y, rot/*, gyro->GetAngle()*/);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rot, 0.0);//Commented out gyro bc we don't have one
+	//drive->MecanumDrive_Polar(0.5, 0, 0);
 }
 
 //param1: magnitude [-1, 1]
@@ -50,6 +55,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	}
 	else
 	{
+		drive->MecanumDrive_Polar(0, 0, 0);
 		return (int)(false);
 	}
 }
