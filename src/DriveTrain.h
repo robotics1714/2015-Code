@@ -37,6 +37,7 @@ public:
 
 	//Accessor methods
 	Gyro* getGyro(){return gyro;}
+	double getAutoTimer(){return autoTimer->Get();}
 
 	//MORESubsystem autonomous functions
 	void SetUpAuto(AutoInstructions instructions);

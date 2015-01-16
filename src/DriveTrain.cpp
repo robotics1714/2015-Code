@@ -25,7 +25,7 @@ DriveTrain::~DriveTrain()
 
 void DriveTrain::Drive(float x, float y, float rot)
 {
-	drive->MecanumDrive_Cartesian(x, y, rot, 0.0);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rot, gyro->GetAngle()/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 }
 
