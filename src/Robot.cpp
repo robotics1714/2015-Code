@@ -8,14 +8,17 @@
 #define FRONT_RIGHT_DRIVE_PORT 2
 #define REAR_RIGHT_DRIVE_PORT 3
 
+#define LEFT_BUMP_LIMIT_PORT 0
+#define RIGHT_BUMP_LIMIT_PORT 1
+
 #define GYRO_PORT 0
 
 class Robot: public IterativeRobot
 {
 private:
 	LiveWindow *lw;
-	Joystick* left;
 	Joystick* right;
+	Joystick* left;
 	DriveTrain* drive;
 	Gyro* gyro;
 
@@ -23,13 +26,14 @@ private:
 	{
 		lw = LiveWindow::GetInstance();
 
-		left = new Joystick(0);
-		right = new Joystick(1);
+		right = new Joystick(0);
+		left = new Joystick(1);
 
 		gyro = new Gyro(GYRO_PORT);
 
 		drive = new DriveTrain(FRONT_LEFT_DRIVE_PORT, REAR_LEFT_DRIVE_PORT,
-				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, gyro, "MECANUM");
+				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
+				RIGHT_BUMP_LIMIT_PORT, gyro, "MECANUM");
 	}
 
 	void AutonomousInit()
@@ -48,9 +52,9 @@ private:
 
 	void TeleopPeriodic()
 	{
-		drive->Drive(right->GetX()*-1, right->GetY()*-1, left->GetX()*-1);
-		SmartDashboard::PutNumber("X", right->GetX());
-		SmartDashboard::PutNumber("Y", right->GetY()*-1);
+		drive->Drive(right->GetX(), right->GetY(), left->GetX()*-1);
+		SmartDashboard::PutNumber("X", left->GetX());
+		SmartDashboard::PutNumber("Y", left->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", left->GetX());
 	}
 
