@@ -1,9 +1,10 @@
 #include "AutoStep.h"
 
-AutoStep::AutoStep(MORESubsystem* subsystem, AutoInstructions instruction)
+AutoStep::AutoStep(MORESubsystem* subsystem, AutoInstructions instruction, string name)
 {
 	subsystems.push_back(subsystem);
 	instructions.push_back(instruction);
+	stepName = name;
 	firstLoop = true;
 }
 

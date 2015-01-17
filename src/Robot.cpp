@@ -66,7 +66,7 @@ private:
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 0.5;
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Go Forward"));
 
 		//Second step, drive to the right for 0.5 seconds
 		currentInstr.flags = DriveTrain::TIME;
@@ -75,7 +75,7 @@ private:
 		currentInstr.param3 = 0;//no rotation
 		currentInstr.param4 = 0.5;
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Strafe Right"));
 
 		//Third step, turn for 1 second
 		currentInstr.flags = DriveTrain::TIME;
@@ -84,7 +84,7 @@ private:
 		currentInstr.param3 = -0.5;//half speed rotation
 		currentInstr.param4 = 1;
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Turn"));
 	}
 
 	void AutonomousPeriodic()
@@ -98,6 +98,8 @@ private:
 				//When the step finishes, remove it from the queue
 				autoSteps.pop();
 			}
+			//Print out the step of autonomous to smart dashboard
+			SmartDashboard::PutString("Auto Step:", autoSteps.front()->GetStepName());
 		}
 		SmartDashboard::PutNumber("Auto Timer", drive->getAutoTimer());
 	}
