@@ -54,6 +54,8 @@ bool Rake::MoveForTime()
 		{
 			winch->Set(0);
 			movingForTime = false;
+			moveTimeSpeed = 0;
+			moveTimeDuration = 0;
 		}
 	}
 
@@ -69,13 +71,18 @@ void Rake::Stop()
 
 }
 
+//param1: speed
+//param2: duration
+//param3-param4: unused
 void Rake::SetUpAuto(AutoInstructions instructions)
 {
-	///TODO Fill this in
+	float speed = instructions.param1;
+	float duration = instructions.param2;
+
+	StartMoveForTime(speed, duration);
 }
 
 int Rake::Auto(AutoInstructions instructions)
 {
-	///TODO Fill this in
-	return 0;
+	return (int)(MoveForTime());
 }
