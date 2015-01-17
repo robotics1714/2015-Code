@@ -1,4 +1,4 @@
-#include <MORESubsystem.h>
+#include "MORESubsystem.h"
 #include <queue>
 #include "WPILib.h"
 #include "AutoStep.h"
@@ -32,6 +32,7 @@ private:
 		lw = LiveWindow::GetInstance();
 
 		right = new Joystick(0);
+		left = new Joystick(1);
 
 		gyro = new Gyro(GYRO_PORT);
 
