@@ -27,8 +27,8 @@ public:
 
 
 	///MORESubsystem Auto Functions
-	void SetUpAuto(AutoInstructions instructions);
-	int Auto(AutoInstructions instructions);
+	void SetUpAuto(AutoInstructions instructions) override;
+	int Auto(AutoInstructions instructions) override;
 };
 
 
