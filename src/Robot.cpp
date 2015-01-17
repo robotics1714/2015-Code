@@ -44,7 +44,6 @@ private:
 
 	void AutonomousInit()
 	{
-		AutoStep* currentStep;
 		AutoInstructions currentInstr;
 
 		//First step, drive forward for 0.5 seconds
@@ -53,10 +52,8 @@ private:
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 0.5;
-		//Create the new step
-		currentStep = new AutoStep(drive, currentInstr);
 		//Add the step to the queue
-		autoSteps.push(currentStep);
+		autoSteps.push(new AutoStep(drive, currentInstr));
 
 		//Second step, drive to the right for 0.5 seconds
 		currentInstr.flags = DriveTrain::TIME;
@@ -64,21 +61,17 @@ private:
 		currentInstr.param2 = 90.0;//Go to the right
 		currentInstr.param3 = 0;//no rotation
 		currentInstr.param4 = 0.5;
-		//Create the new step
-		currentStep = new AutoStep(drive, currentInstr);
 		//Add the step to the queue
-		autoSteps.push(currentStep);
+		autoSteps.push(new AutoStep(drive, currentInstr));
 
 		//Third step, turn for 1 second
 		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.5;//half speed
-		currentInstr.param2 = 0;//No rotation
+		currentInstr.param1 = 0.0;//half speed
+		currentInstr.param2 = 0.0;//No rotation
 		currentInstr.param3 = -0.5;//half speed rotation
 		currentInstr.param4 = 1;
-		//Create the new step
-		currentStep = new AutoStep(drive, currentInstr);
 		//Add the step to the queue
-		autoSteps.push(currentStep);
+		autoSteps.push(new AutoStep(drive, currentInstr));
 	}
 
 	void AutonomousPeriodic()
