@@ -10,6 +10,9 @@ private:
 	CANTalon* liftMotor;
 
 public:
+	static const int FULL_SPEED_UP = 1;
+	static const int FULL_SPEED_DOWN = -1;
+
 	Lift(int talonDeviceNumber, string name);
 	~Lift();
 

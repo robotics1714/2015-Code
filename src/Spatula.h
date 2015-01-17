@@ -16,6 +16,9 @@ class Spatula : public MORESubsystem
 private:
 	CANTalon* rotaryMotor;
 public:
+	static const int CURVE_IN = 1;
+	static const int CURVE_OUT = -1;
+
 	Spatula(int talonDeviceNumber, string name);
 	~Spatula();
 
