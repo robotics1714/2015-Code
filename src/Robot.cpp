@@ -18,8 +18,7 @@ class Robot: public IterativeRobot
 {
 private:
 	LiveWindow *lw;
-	Joystick* right;
-	Joystick* left;
+	Joystick* stick;
 	DriveTrain* drive;
 	Gyro* gyro;
 	DigitalInput* limit;
@@ -31,8 +30,7 @@ private:
 	{
 		lw = LiveWindow::GetInstance();
 
-		right = new Joystick(0);
-		left = new Joystick(1);
+		stick = new Joystick(0);
 
 		gyro = new Gyro(GYRO_PORT);
 
@@ -97,10 +95,10 @@ private:
 
 	void TeleopPeriodic()
 	{
-		drive->Drive(right->GetX(), right->GetY(), right->GetTwist()*-1);
-		SmartDashboard::PutNumber("X", right->GetX());
-		SmartDashboard::PutNumber("Y", right->GetY()*-1);
-		SmartDashboard::PutNumber("Twist", right->GetTwist());
+		drive->Drive(stick->GetX(), stick->GetY(), stick->GetTwist()*-1);
+		SmartDashboard::PutNumber("X", stick->GetX());
+		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
+		SmartDashboard::PutNumber("Twist", stick->GetTwist());
 		SmartDashboard::PutNumber("Switch", limit->Get());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
 	}
