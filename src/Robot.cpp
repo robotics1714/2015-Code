@@ -3,11 +3,18 @@
 #include "WPILib.h"
 #include "AutoStep.h"
 #include "DriveTrain.h"
+#include "Spatula.h"
+#include "Rake.h"
+#include "Lift.h"
 
 #define FRONT_LEFT_DRIVE_PORT 0
 #define REAR_LEFT_DRIVE_PORT 1
 #define FRONT_RIGHT_DRIVE_PORT 2
 #define REAR_RIGHT_DRIVE_PORT 3
+
+#define RAKE_WINCH_DEVICE_NUMBER 0
+#define LIFT_MOTOR_DEVICE_NUMBER 1
+#define SPATULA_MOTOR_DEVICE_NUMBER 2
 
 #define LEFT_BUMP_LIMIT_PORT 2
 #define RIGHT_BUMP_LIMIT_PORT 1
@@ -20,6 +27,9 @@ private:
 	LiveWindow *lw;
 	Joystick* stick;
 	DriveTrain* drive;
+	Spatula* spatula;
+	Lift* lift;
+	Rake* rake;
 	Gyro* gyro;
 	DigitalInput* limit;
 
@@ -39,6 +49,10 @@ private:
 				RIGHT_BUMP_LIMIT_PORT, gyro, "MECANUM");
 
 		limit = new DigitalInput(0);
+
+		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, "SPATULA");
+		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, "LIFT");
+		rake = new Rake(RAKE_WINCH_DEVICE_NUMBER, "RAKE");
 	}
 
 	void AutonomousInit()
