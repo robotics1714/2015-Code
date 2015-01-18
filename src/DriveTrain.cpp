@@ -142,7 +142,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 
 	SmartDashboard::PutNumber("myAngle", myAngle);
 
-	turnSpeed = (error * kP) - 0.000;
+	turnSpeed = (error * kP);
 
 	return turnSpeed;
 }
