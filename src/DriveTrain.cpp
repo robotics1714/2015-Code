@@ -25,7 +25,31 @@ DriveTrain::~DriveTrain()
 
 void DriveTrain::Drive(float x, float y, float rot)
 {
-	drive->MecanumDrive_Cartesian(x, y, rot, gyro->GetAngle()/*0.0*/);//Commented out gyro bc we don't have one
+	float rotation = rot;
+
+	//If the driver wants to turn, make the current angle the current heading and turn that much
+	if(fabs(rot) > 0)
+	{
+		currentHeading = gyro->GetAngle();
+		rotation = rot;
+	}
+	//If the driver does not want to turn, make sure the robot stays and the desired heading
+	else
+	{
+		//Normalize the current heading between [-180, 180)
+		/*while(currentHeading >= 180)
+		{
+			currentHeading -= 360;
+		}
+		while(currentHeading <= -180)
+		{
+			currentHeading += 360;
+		}*/
+		//Find the appropriate amount of turn
+		rotation = GetTurnSpeed(currentHeading);
+	}
+
+	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 }
 
@@ -101,20 +125,22 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 {
 	float error = 0.0;
 	float turnSpeed = 0.0;
-	float kP = 0.1;
-	//Put my angle into a range of [-180, 180)
+	float kP = 0.06;
+	//Put my angle into a range of [-180, 180]
 	float myAngle = gyro->GetAngle();
-	while(myAngle >= 180)
+	/*while(myAngle >= 180)
 	{
 		myAngle -= 360;
 	}
-	while(myAngle < -180)
+	while(myAngle <= -180)
 	{
-		myAngle += 180;
-	}
+		myAngle += 360;
+	}*/
 
 	//Calculate the error
 	error = myAngle - setPoint;
+
+	SmartDashboard::PutNumber("myAngle", myAngle);
 
 	turnSpeed = (error * kP) - 0.000;
 

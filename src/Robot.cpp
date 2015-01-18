@@ -49,6 +49,8 @@ private:
 				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
 				RIGHT_BUMP_LIMIT_PORT, gyro, "MECANUM");
 
+		drive->getGyro()->Reset();
+
 		limit = new DigitalInput(0);
 
 		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, "SPATULA");
@@ -123,7 +125,7 @@ private:
 
 	void TeleopInit()
 	{
-		drive->getGyro()->Reset();
+		//drive->getGyro()->Reset();
 	}
 
 	void TeleopPeriodic()
@@ -140,9 +142,9 @@ private:
 		{
 			y = stick->GetY();
 		}
-		if(fabs(stick->GetTwist()) > 0.12)
+		if((fabs(stick->GetTwist()) > 0.12) && (!stick->GetRawButton(1)))
 		{
-			twist = stick->GetTwist()*-1;
+			twist = stick->GetTwist()*(-0.6);
 		}
 
 		drive->Drive(x, y, twist);
@@ -151,6 +153,7 @@ private:
 		SmartDashboard::PutNumber("Twist", stick->GetTwist());
 		SmartDashboard::PutNumber("Switch", limit->Get());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+		SmartDashboard::PutNumber("Current Heading", drive->GetCurrentHeading());
 	}
 
 	void TestPeriodic()

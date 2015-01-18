@@ -1,6 +1,8 @@
 #ifndef DRIVETRAIN_H
 #define DRIVETRAIN_H
 
+#include <cmath>
+#include "SmartDashboard/SmartDashboard.h"
 #include "RobotDrive.h"
 #include "Gyro.h"
 #include "DigitalInput.h"
@@ -21,6 +23,9 @@ private:
 	//A timer to be used to keep track of how long the drive train moves
 	Timer* autoTimer;
 
+	//used to keep the robot at the same heading in teleop when its not turning
+	float currentHeading;
+
 	float GetTurnSpeed(float setPoint);
 public:
 	//Define the auto flags
@@ -39,6 +44,7 @@ public:
 	//Accessor methods
 	Gyro* getGyro(){return gyro;}
 	double getAutoTimer(){return autoTimer->Get();}
+	float GetCurrentHeading(){return currentHeading;}
 
 	//MORESubsystem autonomous functions
 	void SetUpAuto(AutoInstructions instructions) override;
