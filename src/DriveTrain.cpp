@@ -31,7 +31,7 @@ void DriveTrain::Drive(float x, float y, float rot)
 
 //param1: magnitude [-1, 1]
 //param2: direction (degrees)
-//param3: rotation [-1, 1]
+//param3: where to rotate to (degrees)
 //param4: time (seconds)
 void DriveTrain::SetUpAuto(AutoInstructions instructions)
 {
@@ -42,7 +42,7 @@ void DriveTrain::SetUpAuto(AutoInstructions instructions)
 
 /*param1: magnitude [-1, 1]
  *param2: direction (degrees)
- *param3: rotation [-1, 1]
+ *param3: where to rotate to (degrees)
  *param4: time (seconds)
  *
  *If the TIME flag is set, the robot will drive with the set magnitude, direction, and rotation until
@@ -59,15 +59,16 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	//Put the instruction parameters into more readable variables
 	double magnitude = instructions.param1;
 	double dir = instructions.param2;
-	double rot = instructions.param3;
+	double rot = instructions.param3;//Where to robot should rotate to
 	double time = instructions.param4;
+	double turnSpeed = GetTurnSpeed(rot);
 
 	//Drive with the specified instructions until the time has passed
 	if((instructions.flags & TIME) == TIME)
 	{
 		if(autoTimer->Get() <= time)
 		{
-			drive->MecanumDrive_Polar(magnitude, dir, rot);
+			drive->MecanumDrive_Polar(magnitude, dir, turnSpeed);
 			return (int)(true);
 		}
 		else
@@ -81,7 +82,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	{
 		if((leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
 		{
-			drive->MecanumDrive_Polar(magnitude, dir, rot);
+			drive->MecanumDrive_Polar(magnitude, dir, turnSpeed);
 			return (int)(true);
 		}
 		else
@@ -93,4 +94,29 @@ int DriveTrain::Auto(AutoInstructions instructions)
 
 	//if we get here, something went wrong, so return false
 	return false;
+}
+
+//This functions will return the turn speed needed to get the robot to a certain heading
+float DriveTrain::GetTurnSpeed(float setPoint)
+{
+	float error = 0.0;
+	float turnSpeed = 0.0;
+	float kP = 0.1;
+	//Put my angle into a range of [-180, 180)
+	float myAngle = gyro->GetAngle();
+	while(myAngle >= 180)
+	{
+		myAngle -= 360;
+	}
+	while(myAngle < -180)
+	{
+		myAngle += 180;
+	}
+
+	//Calculate the error
+	error = myAngle - setPoint;
+
+	turnSpeed = (error * kP) - 0.000;
+
+	return turnSpeed;
 }

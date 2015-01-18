@@ -1,5 +1,6 @@
 #include "MORESubsystem.h"
 #include <queue>
+#include <cmath>
 #include "WPILib.h"
 #include "AutoStep.h"
 #include "DriveTrain.h"
@@ -57,19 +58,21 @@ private:
 
 	void AutonomousInit()
 	{
+		drive->getGyro()->Reset();
+
 		AutoInstructions currentInstr;
 
-		//First step, drive forward for 0.5 seconds
+		//First step, drive forward for 7 seconds
 		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.5;//Go half speed
+		currentInstr.param1 = 0.75;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 0.5;
+		currentInstr.param4 = 4.5;//turn for 7 seconds
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Go Forward"));
 
 		//Second step, drive to the right for 0.5 seconds
-		currentInstr.flags = DriveTrain::TIME;
+		/*currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.5;//half speed
 		currentInstr.param2 = 90.0;//Go to the right
 		currentInstr.param3 = 0;//no rotation
@@ -84,7 +87,7 @@ private:
 		currentInstr.param3 = -0.5;//half speed rotation
 		currentInstr.param4 = 1;
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Turn"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Turn"));*/
 	}
 
 	void AutonomousPeriodic()
@@ -101,17 +104,48 @@ private:
 			//Print out the step of autonomous to smart dashboard
 			SmartDashboard::PutString("Auto Step:", autoSteps.front()->GetStepName());
 		}
+		/*if(stick->GetRawButton(1))
+		{
+			AutoInstructions currentInstr;
+
+			//First step, drive forward for 7 seconds
+			currentInstr.flags = DriveTrain::TIME;
+			currentInstr.param1 = 0.55;//Go half speed
+			currentInstr.param2 = 0.0;//Go straight
+			currentInstr.param3 = 0.0;//No rotation
+			currentInstr.param4 = 7;//turn for 7 seconds
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(drive, currentInstr, "Go Forward"));
+		}*/
 		SmartDashboard::PutNumber("Auto Timer", drive->getAutoTimer());
+		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
 	}
 
 	void TeleopInit()
 	{
-		gyro->Reset();
+		drive->getGyro()->Reset();
 	}
 
 	void TeleopPeriodic()
 	{
-		drive->Drive(stick->GetX(), stick->GetY(), stick->GetTwist()*-1);
+		float x, y, twist;
+		x = y = twist = 0.0;
+
+		//Filter out values coming from the joystick not returning to center
+		if(fabs(stick->GetX()) > 0.12)
+		{
+			x = stick->GetX();
+		}
+		if(fabs(stick->GetY()) > 0.12)
+		{
+			y = stick->GetY();
+		}
+		if(fabs(stick->GetTwist()) > 0.12)
+		{
+			twist = stick->GetTwist()*-1;
+		}
+
+		drive->Drive(x, y, twist);
 		SmartDashboard::PutNumber("X", stick->GetX());
 		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", stick->GetTwist());

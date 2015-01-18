@@ -21,6 +21,7 @@ private:
 	//A timer to be used to keep track of how long the drive train moves
 	Timer* autoTimer;
 
+	float GetTurnSpeed(float setPoint);
 public:
 	//Define the auto flags
 	//this flag will tell the drive-train to drive for a specified time in autonomous
