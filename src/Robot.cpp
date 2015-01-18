@@ -14,11 +14,18 @@
 #define REAR_RIGHT_DRIVE_PORT 3
 
 #define RAKE_WINCH_DEVICE_NUMBER 0
-#define LIFT_MOTOR_DEVICE_NUMBER 1
-#define SPATULA_MOTOR_DEVICE_NUMBER 2
 
-#define LEFT_BUMP_LIMIT_PORT 2
-#define RIGHT_BUMP_LIMIT_PORT 1
+#define LIFT_MOTOR_DEVICE_NUMBER 1
+#define LIFT_ENCO_A_PORT 2
+#define LIFT_ENCO_B_PORT 3
+#define LIFT_UPPER_BOUND_PORT 4
+#define LIFT_LOWER_BOUND_PORT 5
+
+#define SPATULA_MOTOR_DEVICE_NUMBER 2
+#define SPATULA_POT_PORT 1
+
+#define LEFT_BUMP_LIMIT_PORT 1
+#define RIGHT_BUMP_LIMIT_PORT 0
 
 #define GYRO_PORT 0
 
@@ -32,7 +39,6 @@ private:
 	Lift* lift;
 	Rake* rake;
 	Gyro* gyro;
-	DigitalInput* limit;
 
 	//For autonomous
 	queue<AutoStep*> autoSteps;
@@ -51,10 +57,9 @@ private:
 
 		drive->getGyro()->Reset();
 
-		limit = new DigitalInput(0);
-
-		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, "SPATULA");
-		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, "LIFT");
+		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_POT_PORT, "SPATULA");
+		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_ENCO_A_PORT, LIFT_ENCO_B_PORT,
+				LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT, "LIFT");
 		rake = new Rake(RAKE_WINCH_DEVICE_NUMBER, "RAKE");
 	}
 
@@ -151,7 +156,6 @@ private:
 		SmartDashboard::PutNumber("X", stick->GetX());
 		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", stick->GetTwist());
-		SmartDashboard::PutNumber("Switch", limit->Get());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
 		SmartDashboard::PutNumber("Current Heading", drive->GetCurrentHeading());
 	}
