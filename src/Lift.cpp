@@ -4,19 +4,23 @@ Lift::Lift(int talonDeviceNumber, int encoAPort, int encoBPort, int upperBoundPo
 {
 	liftMotor = new CANTalon(talonDeviceNumber);
 	liftEncoder = new Encoder(encoAPort, encoBPort);
+	liftEncoder->SetDistancePerPulse(DISTANCE_PER_PULSE);
 	liftEncoder->Reset();
+
 	upperBound = new DigitalInput(upperBoundPort);
 	lowerBound = new DigitalInput (lowerBoundPort);
-	movingUpLevel = false;
-	movingDownLevel = false;
+
+	movingToLevel = false;
+	integral = 0;
+
 	currentLevel = 0;
 	levelEncoValues[0] = 0;
-	levelEncoValues[1] = 10;
-	levelEncoValues[2] = 100;
-	levelEncoValues[3] = 1000;
-	levelEncoValues[4] = 10000;
-	levelEncoValues[5] = 100000;
-	levelEncoValues[6] = 1000000;
+	levelEncoValues[1] = HEIGHT_OF_SCORING_PLAT + (HEIGHT_OF_TOTE) + 3;
+	levelEncoValues[2] = HEIGHT_OF_SCORING_PLAT + (2*HEIGHT_OF_TOTE) + 3;
+	levelEncoValues[3] = HEIGHT_OF_SCORING_PLAT + (3*HEIGHT_OF_TOTE) + 3;
+	levelEncoValues[4] = HEIGHT_OF_SCORING_PLAT + (4*HEIGHT_OF_TOTE) + 3;
+	levelEncoValues[5] = HEIGHT_OF_SCORING_PLAT + (5*HEIGHT_OF_TOTE) + 3;
+	levelEncoValues[6] = HEIGHT_OF_SCORING_PLAT + (6*HEIGHT_OF_TOTE) + 3;
 }
 
 Lift::~Lift()
@@ -40,7 +44,75 @@ void Lift::Move(float speed)
 		liftMotor->Set(0);
 	}
 }
-void Lift::StartMoveUpLevel()
+
+void Lift::StartMoveToLevel(int level)
+{
+	if(!movingToLevel)
+	{
+		//Put the level between 0 and 6
+		if(level > 6)
+			currentLevel = 6;
+		else if(level < 0)
+			currentLevel = 0;
+		else
+			currentLevel = level;
+
+		integral = 0;
+
+		movingToLevel = true;
+	}
+}
+
+bool Lift::MoveToLevel()
+{
+	float posSetPoint = levelEncoValues[currentLevel];
+	float posCurLoc = liftEncoder->GetDistance();//Position current location
+	float posError;
+	float speedSetPoint;
+	float curSpeed = liftEncoder->GetRate();
+	float speedError;
+	float motorOutput;
+	//TODO tune this
+	float posKP = 0.01;
+	float speedKP = 0.01;
+	float speedKI = 0.001;
+
+	//Check if the lift is with 0.25in of the level
+	if(abs(posSetPoint - posCurLoc) > 0.25)
+	{
+		//Calculate the desired speed in in/s
+		posError = posSetPoint - posCurLoc;
+		speedSetPoint = posError * posKP;
+
+		//Limit the speed
+		if(speedSetPoint > SPEED_LIMIT)
+		{
+			speedSetPoint = SPEED_LIMIT;
+		}
+		if(speedSetPoint < (-SPEED_LIMIT))
+		{
+			speedSetPoint = -SPEED_LIMIT;
+		}
+
+		//Calculate the motor output [-1, 1]
+		speedError = speedSetPoint - curSpeed;
+		integral += speedError;
+		motorOutput = (speedError * speedKP) + (integral * speedKI);
+
+		//Move the motor yo
+		Move(motorOutput);
+	}
+	else
+	{
+		//We done
+		Move(0);
+		movingToLevel = false;
+	}
+
+	return movingToLevel;
+}
+
+/*void Lift::StartMoveUpLevel()
 {
 	if(!movingUpLevel && !movingDownLevel && (currentLevel +1<7))
 	{
@@ -96,7 +168,7 @@ bool Lift::MoveDownLevel()
 		}
 	}
 	return movingDownLevel;
-}
+}*/
 
 void Lift::CheckLowerBoundLimit()
 {
