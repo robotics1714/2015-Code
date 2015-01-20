@@ -152,12 +152,25 @@ private:
 			twist = stick->GetTwist()*(-0.6);
 		}
 
+		if(stick->GetRawButton(11))
+		{
+			lift->Move(0.25);
+		}
+		else if(stick->GetRawButton(12))
+		{
+			lift->Move(-0.25);
+		}
+		else
+		{
+			lift->Move(0);
+		}
+
 		drive->Drive(x, y, twist);
 		SmartDashboard::PutNumber("X", stick->GetX());
 		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", stick->GetTwist());
-		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
-		SmartDashboard::PutNumber("Current Heading", drive->GetCurrentHeading());
+		SmartDashboard::PutNumber("Distance: ", lift->GetEnco()->GetDistance());
+		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());
 	}
 
 	void TestPeriodic()
