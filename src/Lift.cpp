@@ -32,16 +32,18 @@ Lift::~Lift()
 
 }
 
-void Lift::Move(float speed)
+bool Lift::Move(float speed)
 {
 	//Make sure we stop when we hit a limit switch
 	if( ((speed > 0) && (upperBound->Get() == RELEASED))  || ((speed < 0) && lowerBound->Get() == RELEASED) )
 	{
 		liftMotor->Set(speed);
+		return true;
 	}
 	else
 	{
 		liftMotor->Set(0);
+		return false;
 	}
 }
 
@@ -96,8 +98,14 @@ bool Lift::MoveToLevel()
 
 		//Calculate the motor output [-1, 1]
 		speedError = speedSetPoint - curSpeed;
-		integral += speedError;
-		motorOutput = (speedError * speedKP) + (integral * speedKI);
+		integral += (speedError * speedKI);
+		motorOutput = (speedError * speedKP) + (integral);
+
+		//If the motor output is 100%, we don't need to add to the integral, so get rid of the integral we added this loop
+		if((motorOutput >= 1) || (motorOutput <= -1))
+		{
+			integral -= (speedError * speedKI);
+		}
 
 		//Move the motor yo
 		Move(motorOutput);

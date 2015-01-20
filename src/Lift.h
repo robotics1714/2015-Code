@@ -35,7 +35,7 @@ public:
 	~Lift();
 
 	//Will move the lift up and down
-	void Move(float speed);
+	bool Move(float speed);
 
 	//bool MoveUpLevel();
 	//bool MoveDownLevel();
