@@ -2,22 +2,24 @@
 #define LIFT_H
 
 #include <cmath>
+#include "SmartDashboard/SmartDashboard.h"
 #include "CANTalon.h"
+#include "Victor.h"
 #include "Encoder.h"
 #include "DigitalInput.h"
 #include "MORESubsystem.h"
 #include "GlobalDefines.h"
 
 #define DISTANCE_PER_PULSE 0.01 //TODO calculate this, it should be (distance the lift travels)/(encoder pulses to travel entire lift)
-#define HEIGHT_OF_TOTE 12.1
+#define HEIGHT_OF_TOTE 2//12.1
 #define HEIGHT_OF_SCORING_PLAT 2
 
-#define SPEED_LIMIT 6 //the max speed the MoveToLevel functions can make the lift go in in/s
+#define SPEED_LIMIT 2//3 //the max speed the MoveToLevel functions can make the lift go in in/s
 
 class Lift : public MORESubsystem
 {
 private:
-	CANTalon* liftMotor;
+	Victor* liftMotor;//TODO this should be a CANTalon
 	Encoder*  liftEncoder;
 	DigitalInput* upperBound;
 	DigitalInput* lowerBound;

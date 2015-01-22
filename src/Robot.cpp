@@ -15,9 +15,9 @@
 
 #define RAKE_WINCH_DEVICE_NUMBER 0
 
-#define LIFT_MOTOR_DEVICE_NUMBER 1
-#define LIFT_ENCO_A_PORT 2
-#define LIFT_ENCO_B_PORT 3
+#define LIFT_MOTOR_DEVICE_NUMBER 5
+#define LIFT_ENCO_A_PORT 3
+#define LIFT_ENCO_B_PORT 2
 #define LIFT_UPPER_BOUND_PORT 4
 #define LIFT_LOWER_BOUND_PORT 5
 
@@ -160,11 +160,27 @@ private:
 		{
 			lift->Move(-0.25);
 		}
-		else
+		else if(!lift->MoveToLevel())
 		{
 			lift->Move(0);
 		}
 
+		if(stick->GetRawButton(7))
+		{
+			lift->StartMoveToLevel(1);
+		}
+		else if(stick->GetRawButton(8))
+		{
+			lift->StartMoveToLevel(2);
+		}
+		else if(stick->GetRawButton(9))
+		{
+			lift->StartMoveToLevel(6);
+		}
+
+
+		//lift->MoveToLevel();
+		lift->CheckLowerBoundLimit();
 		drive->Drive(x, y, twist);
 		SmartDashboard::PutNumber("X", stick->GetX());
 		SmartDashboard::PutNumber("Y", stick->GetY()*-1);

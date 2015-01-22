@@ -2,7 +2,7 @@
 
 Lift::Lift(int talonDeviceNumber, int encoAPort, int encoBPort, int upperBoundPort, int lowerBoundPort, string name) : MORESubsystem(name)
 {
-	liftMotor = new CANTalon(talonDeviceNumber);
+	liftMotor = new Victor(talonDeviceNumber);
 	liftEncoder = new Encoder(encoAPort, encoBPort);
 	liftEncoder->SetDistancePerPulse(DISTANCE_PER_PULSE);
 	liftEncoder->Reset();
@@ -75,12 +75,12 @@ bool Lift::MoveToLevel()
 	float speedError;
 	float motorOutput;
 	//TODO tune this
-	float posKP = 0.01;
-	float speedKP = 0.01;
-	float speedKI = 0.001;
+	float posKP = 0.1;
+	float speedKP = 0.1;
+	float speedKI = 0.01;
 
 	//Check if the lift is with 0.25in of the level
-	if(abs(posSetPoint - posCurLoc) > 0.25)
+	if((fabs(posSetPoint - posCurLoc) > 0.5) && (movingToLevel))
 	{
 		//Calculate the desired speed in in/s
 		posError = posSetPoint - posCurLoc;
@@ -108,7 +108,13 @@ bool Lift::MoveToLevel()
 		}
 
 		//Move the motor yo
-		Move(motorOutput);
+		//Check if this is false, meaning a limit switch was pressed, so stop it
+		if(!Move(motorOutput))
+		{
+			Move(0);
+			SmartDashboard::PutString("HERE", "HERE");
+			movingToLevel = false;
+		}
 	}
 	else
 	{
@@ -116,6 +122,9 @@ bool Lift::MoveToLevel()
 		Move(0);
 		movingToLevel = false;
 	}
+
+	SmartDashboard::PutNumber("speedSetPoint", speedSetPoint);
+	SmartDashboard::PutNumber("motorOutput", motorOutput);
 
 	return movingToLevel;
 }
