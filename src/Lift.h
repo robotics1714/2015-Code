@@ -20,7 +20,7 @@
 class Lift : public MORESubsystem
 {
 private:
-	Victor* liftMotor;//TODO this should be a CANTalon
+	CANTalon* liftMotor;//TODO this should be a CANTalon
 	Encoder*  liftEncoder;
 	DigitalInput* upperBound;
 	DigitalInput* lowerBound;
@@ -32,8 +32,8 @@ private:
 	int levelPotValues[7];
 	float integral;
 public:
-	static const int FULL_SPEED_UP = 1;
-	static const int FULL_SPEED_DOWN = -1;
+	static const int FULL_SPEED_UP = -1;
+	static const int FULL_SPEED_DOWN = 1;
 
 	Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 			int upperBoundPort, int lowerBoundPort, string name);

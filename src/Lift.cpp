@@ -3,7 +3,7 @@
 Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 		int upperBoundPort, int lowerBoundPort, string name) : MORESubsystem(name)
 {
-	liftMotor = new Victor(talonDeviceNumber);
+	liftMotor = new CANTalon(talonDeviceNumber);
 	liftEncoder = new Encoder(encoAPort, encoBPort);
 	liftEncoder->SetDistancePerPulse(DISTANCE_PER_PULSE);
 	liftEncoder->Reset();
