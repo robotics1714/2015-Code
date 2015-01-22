@@ -16,6 +16,7 @@
 #define RAKE_WINCH_DEVICE_NUMBER 0
 
 #define LIFT_MOTOR_DEVICE_NUMBER 5
+#define LIFT_POT_PORT 3
 #define LIFT_ENCO_A_PORT 3
 #define LIFT_ENCO_B_PORT 2
 #define LIFT_UPPER_BOUND_PORT 4
@@ -58,7 +59,7 @@ private:
 		drive->getGyro()->Reset();
 
 		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_POT_PORT, "SPATULA");
-		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_ENCO_A_PORT, LIFT_ENCO_B_PORT,
+		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_POT_PORT, LIFT_ENCO_A_PORT, LIFT_ENCO_B_PORT,
 				LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT, "LIFT");
 		rake = new Rake(RAKE_WINCH_DEVICE_NUMBER, "RAKE");
 	}
@@ -180,12 +181,12 @@ private:
 
 
 		//lift->MoveToLevel();
-		lift->CheckLowerBoundLimit();
+		//lift->CheckLowerBoundLimit();
 		drive->Drive(x, y, twist);
 		SmartDashboard::PutNumber("X", stick->GetX());
 		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", stick->GetTwist());
-		SmartDashboard::PutNumber("Distance: ", lift->GetEnco()->GetDistance());
+		SmartDashboard::PutNumber("Distance: ", lift->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());
 	}
 

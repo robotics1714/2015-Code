@@ -1,11 +1,14 @@
 #include "Lift.h"
 
-Lift::Lift(int talonDeviceNumber, int encoAPort, int encoBPort, int upperBoundPort, int lowerBoundPort, string name) : MORESubsystem(name)
+Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
+		int upperBoundPort, int lowerBoundPort, string name) : MORESubsystem(name)
 {
 	liftMotor = new Victor(talonDeviceNumber);
 	liftEncoder = new Encoder(encoAPort, encoBPort);
 	liftEncoder->SetDistancePerPulse(DISTANCE_PER_PULSE);
 	liftEncoder->Reset();
+
+	liftPot = new AnalogInput(liftPotPort);
 
 	upperBound = new DigitalInput(upperBoundPort);
 	lowerBound = new DigitalInput (lowerBoundPort);
@@ -14,13 +17,13 @@ Lift::Lift(int talonDeviceNumber, int encoAPort, int encoBPort, int upperBoundPo
 	integral = 0;
 
 	currentLevel = 0;
-	levelEncoValues[0] = 0;
-	levelEncoValues[1] = HEIGHT_OF_SCORING_PLAT + (HEIGHT_OF_TOTE) + 3;
-	levelEncoValues[2] = HEIGHT_OF_SCORING_PLAT + (2*HEIGHT_OF_TOTE) + 3;
-	levelEncoValues[3] = HEIGHT_OF_SCORING_PLAT + (3*HEIGHT_OF_TOTE) + 3;
-	levelEncoValues[4] = HEIGHT_OF_SCORING_PLAT + (4*HEIGHT_OF_TOTE) + 3;
-	levelEncoValues[5] = HEIGHT_OF_SCORING_PLAT + (5*HEIGHT_OF_TOTE) + 3;
-	levelEncoValues[6] = HEIGHT_OF_SCORING_PLAT + (6*HEIGHT_OF_TOTE) + 3;
+	levelPotValues[0] = 0;
+	levelPotValues[1] = HEIGHT_OF_SCORING_PLAT + (HEIGHT_OF_TOTE) + 3;
+	levelPotValues[2] = HEIGHT_OF_SCORING_PLAT + (2*HEIGHT_OF_TOTE) + 3;
+	levelPotValues[3] = HEIGHT_OF_SCORING_PLAT + (3*HEIGHT_OF_TOTE) + 3;
+	levelPotValues[4] = HEIGHT_OF_SCORING_PLAT + (4*HEIGHT_OF_TOTE) + 3;
+	levelPotValues[5] = HEIGHT_OF_SCORING_PLAT + (5*HEIGHT_OF_TOTE) + 3;
+	levelPotValues[6] = HEIGHT_OF_SCORING_PLAT + (6*HEIGHT_OF_TOTE) + 3;
 }
 
 Lift::~Lift()
@@ -35,7 +38,7 @@ Lift::~Lift()
 bool Lift::Move(float speed)
 {
 	//Make sure we stop when we hit a limit switch
-	if( ((speed > 0) && (upperBound->Get() == RELEASED))  || ((speed < 0) && lowerBound->Get() == RELEASED) )
+	if( ((speed < 0) && (upperBound->Get() == RELEASED))  || ((speed > 0) && lowerBound->Get() == RELEASED) )
 	{
 		liftMotor->Set(speed);
 		return true;
@@ -67,23 +70,23 @@ void Lift::StartMoveToLevel(int level)
 
 bool Lift::MoveToLevel()
 {
-	float posSetPoint = levelEncoValues[currentLevel];
-	float posCurLoc = liftEncoder->GetDistance();//Position current location
+	float posSetPoint = levelPotValues[currentLevel];
+	float posCurLoc = liftPot->GetAverageValue();//Position current location
 	float posError;
 	float speedSetPoint;
 	float curSpeed = liftEncoder->GetRate();
 	float speedError;
 	float motorOutput;
 	//TODO tune this
-	float posKP = 0.1;
+	float posKP = 0.01;
 	float speedKP = 0.1;
 	float speedKI = 0.01;
 
 	//Check if the lift is with 0.25in of the level
-	if((fabs(posSetPoint - posCurLoc) > 0.5) && (movingToLevel))
+	if((fabs(posSetPoint - posCurLoc) > 50) && (movingToLevel))
 	{
 		//Calculate the desired speed in in/s
-		posError = posSetPoint - posCurLoc;
+		posError = posCurLoc - posSetPoint;
 		speedSetPoint = posError * posKP;
 
 		//Limit the speed
@@ -187,14 +190,14 @@ bool Lift::MoveDownLevel()
 	return movingDownLevel;
 }*/
 
-void Lift::CheckLowerBoundLimit()
+/*void Lift::CheckLowerBoundLimit()
 {
 	//Check if the bottom limit switch is pressed. If it is, reset the encoder
 	if(lowerBound->Get() == PRESSED)
 	{
 		liftEncoder->Reset();
 	}
-}
+}*/
 
 //Autonomous functions
 void Lift::SetUpAuto(AutoInstructions instructions)
