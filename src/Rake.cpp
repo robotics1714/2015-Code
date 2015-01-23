@@ -7,9 +7,10 @@
 
 #include "Rake.h"
 
-Rake::Rake(int talonDeviceNumber, string name) : MORESubsystem(name)
+Rake::Rake(int talonDeviceNumber, int limitPort, string name) : MORESubsystem(name)
 {
 	winch = new CANTalon(talonDeviceNumber);
+	upperLimit = new DigitalInput(limitPort);
 	moveTimer = new Timer();
 	moveTimeSpeed = 0;
 	moveTimeDuration = 0;
@@ -22,9 +23,19 @@ Rake::~Rake()
 	delete moveTimer;
 }
 
-void Rake::Move(float speed)
+bool Rake::Move(float speed)
 {
-	winch->Set(speed);
+
+	if((speed > 0) && (upperLimit->Get() == PRESSED))
+	{
+		winch->Set(0);
+		return false;
+	}
+	else
+	{
+		winch->Set(speed);
+		return true;
+	}
 }
 
 void Rake::StartMoveForTime(float speed, float time)
@@ -48,11 +59,11 @@ bool Rake::MoveForTime()
 	{
 		if(moveTimer->Get() < moveTimeDuration)
 		{
-			winch->Set(moveTimeSpeed);
+			Move(moveTimeSpeed);
 		}
 		else
 		{
-			winch->Set(0);
+			Move(0);
 			movingForTime = false;
 			moveTimeSpeed = 0;
 			moveTimeDuration = 0;
@@ -67,7 +78,7 @@ void Rake::Stop()
 	movingForTime = false;
 	moveTimeSpeed = 0;
 	moveTimeDuration = 0;
-	winch->Set(0);
+	Move(0);
 
 }
 
