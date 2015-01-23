@@ -187,6 +187,7 @@ private:
 		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", stick->GetTwist());
 		SmartDashboard::PutNumber("Distance: ", lift->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
 		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());
 	}
 
