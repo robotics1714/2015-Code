@@ -8,8 +8,13 @@
 #ifndef SPATULA_H
 #define SPATULA_H
 
-#define SPATULA_UP 1
-#define SPATULA_DOWN 0
+#define SPATULA_UP 400
+#define SPATULA_DOWN 1200
+
+
+#define CURVE_IN -0.5
+#define CURVE_OUT  0.5
+
 
 #include "CANTalon.h"
 #include "MORESubsystem.h"
@@ -23,9 +28,6 @@ private:
 	bool movingUp;
 	bool movingDown;
 public:
-	static const int CURVE_IN = 1;
-	static const int CURVE_OUT = -1;
-
 	Spatula(int talonDeviceNumber, int potPort, string name);
 	~Spatula();
 
@@ -38,6 +40,7 @@ public:
 	///Rotates the bottom of the lift
 	void Rotate(float speed);
 
+	AnalogInput* GetPot(){return pot;}
 
 	///MORESubsystem Auto Functions
 	void SetUpAuto(AutoInstructions instructions) override;

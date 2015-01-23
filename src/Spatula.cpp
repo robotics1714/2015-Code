@@ -50,9 +50,9 @@ bool Spatula::MoveUp()
 	if(movingUp)
 	{
 		///Move up if the spatula isn't up already
-		if(pot->GetAverageValue() < SPATULA_UP)
+		if(pot->GetAverageValue() > SPATULA_UP)
 		{
-			rotaryMotor->Set(CURVE_IN);
+			rotaryMotor->Set(CURVE_OUT);
 		}
 		///Set Motor to 0
 		else
@@ -70,9 +70,9 @@ bool Spatula::MoveDown()
 	if(movingDown)
 	{
 		///Move down if the spatula isn't moving
-		if(pot->GetAverageValue() < SPATULA_UP)
+		if(pot->GetAverageValue() < SPATULA_DOWN)
 		{
-			rotaryMotor->Set(CURVE_OUT);
+			rotaryMotor->Set(CURVE_IN);
 		}
 		///Set Motor to 0
 		else

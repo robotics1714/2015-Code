@@ -59,7 +59,14 @@ bool Rake::MoveForTime()
 	{
 		if(moveTimer->Get() < moveTimeDuration)
 		{
-			Move(moveTimeSpeed);
+			//If the limit switch is pressed, stop moving
+			if(!Move(moveTimeSpeed))
+			{
+				Move(0);
+				movingForTime = false;
+				moveTimeSpeed = 0;
+				moveTimeDuration = 0;
+			}
 		}
 		else
 		{
