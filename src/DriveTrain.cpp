@@ -1,7 +1,8 @@
 #include "DriveTrain.h"
 
 DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
-		int lBumpLimitPort, int rBumpLimitPort, Gyro* scope, string name) : MORESubsystem(name)
+		int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
+		Gyro* scope, string name) : MORESubsystem(name)
 {
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
@@ -9,6 +10,8 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	gyro->SetSensitivity(GYRO_SENSITIVITY);
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
+	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
+	sonic->SetAutomaticMode(true);
 	autoTimer = new Timer();
 	currentHeading = 0;
 
@@ -123,9 +126,23 @@ int DriveTrain::Auto(AutoInstructions instructions)
 			return (int)(false);
 		}
 	}
+	//Drive until the unltrasonic sensor says we are within 5 inches or either of the limit switches are pressed
+	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
+	{
+		if((sonic->GetRangeInches() > 5) && (leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
+		{
+			drive->MecanumDrive_Polar(magnitude, dir, turnSpeed);
+			return (int)(true);
+		}
+		else
+		{
+			drive->MecanumDrive_Polar(0, 0, 0);
+			return (int)(false);
+		}
+	}
 
 	//if we get here, something went wrong, so return false
-	return false;
+	return (int)(false);
 }
 
 //This functions will return the turn speed needed to get the robot to a certain heading

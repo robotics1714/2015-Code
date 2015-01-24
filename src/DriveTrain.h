@@ -6,6 +6,7 @@
 #include "RobotDrive.h"
 #include "Gyro.h"
 #include "DigitalInput.h"
+#include "Ultrasonic.h"
 #include "Timer.h"
 #include "MORESubsystem.h"
 #include "GlobalDefines.h"
@@ -22,6 +23,8 @@ private:
 	//The limit switches to tell the robot when it hits the step in autonomous
 	DigitalInput* leftBumpSwitch;
 	DigitalInput* rightBumpSwitch;
+	//Ultrasonic sensor to tell the robot when it is close to the step
+	Ultrasonic* sonic;
 	//A timer to be used to keep track of how long the drive train moves
 	Timer* autoTimer;
 
@@ -35,10 +38,13 @@ public:
 	static const int TIME = 1;
 	//this flag will tell the drive-train to drive until the bump limit switches are pressed
 	static const int BUMP = 2;
+	//this flag will tell the drive-train to drive until we get close to the step according to the ultrasonic sensor
+	static const int ULTRASONIC = 4;
 
 	//Constructor/Deconstructor
 	DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
-			int lBumpLimitPort, int rBumpLimitPort, Gyro* scope, string name);
+			int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
+			Gyro* scope, string name);
 	~DriveTrain();
 
 	void Drive(float x, float y, float rot);
