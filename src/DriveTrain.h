@@ -10,6 +10,8 @@
 #include "MORESubsystem.h"
 #include "GlobalDefines.h"
 
+#define GYRO_SENSITIVITY 0.0017
+
 class DriveTrain : public MORESubsystem
 {
 private:
@@ -40,6 +42,7 @@ public:
 	~DriveTrain();
 
 	void Drive(float x, float y, float rot);
+	void TankDrive(float left, float right);
 
 	//Accessor methods
 	Gyro* getGyro(){return gyro;}

@@ -35,12 +35,17 @@ class Robot: public IterativeRobot
 {
 private:
 	LiveWindow *lw;
-	Joystick* stick;
+	Joystick* rightStick;
+	Joystick* leftStick;
 	DriveTrain* drive;
 	Spatula* spatula;
 	Lift* lift;
 	Rake* rake;
 	Gyro* gyro;
+
+	//Keeps track if the robot has mecanum drive
+	bool mecanum;
+	bool leftTwoButtonPressed;
 
 	//For autonomous
 	queue<AutoStep*> autoSteps;
@@ -49,7 +54,8 @@ private:
 	{
 		lw = LiveWindow::GetInstance();
 
-		stick = new Joystick(0);
+		rightStick = new Joystick(0);
+		leftStick = new Joystick(1);
 
 		gyro = new Gyro(GYRO_PORT);
 
@@ -63,6 +69,9 @@ private:
 		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_POT_PORT, LIFT_ENCO_A_PORT, LIFT_ENCO_B_PORT,
 				LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT, "LIFT");
 		rake = new Rake(RAKE_WINCH_DEVICE_NUMBER, RAKE_LIMIT_PORT, "RAKE");
+
+		mecanum = true;
+		leftTwoButtonPressed = false;
 	}
 
 	void AutonomousInit()
@@ -141,24 +150,24 @@ private:
 		x = y = twist = 0.0;
 
 		//Filter out values coming from the joystick not returning to center
-		if(fabs(stick->GetX()) > 0.12)
+		if(fabs(rightStick->GetX()) > 0.12)
 		{
-			x = stick->GetX();
+			x = rightStick->GetX();
 		}
-		if(fabs(stick->GetY()) > 0.12)
+		if(fabs(rightStick->GetY()) > 0.12)
 		{
-			y = stick->GetY();
+			y = rightStick->GetY();
 		}
-		if((fabs(stick->GetTwist()) > 0.12) && (!stick->GetRawButton(1)))
+		if((fabs(rightStick->GetTwist()) > 0.12) && (!rightStick->GetRawButton(1)))
 		{
-			twist = stick->GetTwist()*(-0.6);
+			twist = rightStick->GetTwist()*(-0.6);
 		}
 
-		if(stick->GetRawButton(11))
+		/*if(rightStick->GetRawButton(11))
 		{
 			lift->Move(0.25);
 		}
-		else if(stick->GetRawButton(12))
+		else if(rightStick->GetRawButton(12))
 		{
 			lift->Move(-0.25);
 		}
@@ -167,38 +176,58 @@ private:
 			lift->Move(0);
 		}
 
-		if(stick->GetRawButton(7))
+		if(rightStick->GetRawButton(7))
 		{
 			lift->StartMoveToLevel(1);
 		}
-		else if(stick->GetRawButton(8))
+		else if(rightStick->GetRawButton(8))
 		{
 			lift->StartMoveToLevel(2);
 		}
-		else if(stick->GetRawButton(9))
+		else if(rightStick->GetRawButton(9))
 		{
 			lift->StartMoveToLevel(6);
 		}
 
-
-		if(stick->GetRawButton(3))
+		if(rightStick->GetRawButton(3))
 		{
 			spatula->StartMoveDown();
 		}
-		else if(stick->GetRawButton(4))
+		else if(rightStick->GetRawButton(4))
 		{
 			spatula->StartMoveUp();
+		}*/
+
+		//Change between tank and mecanum drive
+		if(leftStick->GetRawButton(2) && !leftTwoButtonPressed)
+		{
+			mecanum = !mecanum;
+			leftTwoButtonPressed = true;
+		}
+		if(!leftStick->GetRawButton(2))
+		{
+			leftTwoButtonPressed = false;
 		}
 
+		if(mecanum)
+		{
+			drive->Drive(x, y, twist);
+		}
+		else
+		{
+			drive->TankDrive(leftStick->GetY(), rightStick->GetY());
+		}
+
+		///Ping Distance
+		//sonar->Ping();
 		//lift->MoveToLevel();
 		//lift->CheckLowerBoundLimit();
-		drive->Drive(x, y, twist);
 		rake->MoveForTime();
 		spatula->MoveDown();
 		spatula->MoveUp();
-		SmartDashboard::PutNumber("X", stick->GetX());
-		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
-		SmartDashboard::PutNumber("Twist", stick->GetTwist());
+		SmartDashboard::PutNumber("X", rightStick->GetX());
+		SmartDashboard::PutNumber("Y", rightStick->GetY()*-1);
+		SmartDashboard::PutNumber("Twist", rightStick->GetTwist());
 		SmartDashboard::PutNumber("Distance: ", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
 		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());

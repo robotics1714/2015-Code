@@ -6,6 +6,7 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
 	gyro = scope;
+	gyro->SetSensitivity(GYRO_SENSITIVITY);
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
 	autoTimer = new Timer();
@@ -50,9 +51,14 @@ void DriveTrain::Drive(float x, float y, float rot)
 		rotation = GetTurnSpeed(currentHeading);
 	}
 
-	//Multiply the gyro angle by -4 because one revolution is 90 degrees and is is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-4/*0.0*/);//Commented out gyro bc we don't have one
+	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
+	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-1/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
+}
+
+void DriveTrain::TankDrive(float left, float right)
+{
+	drive->TankDrive(left, right);
 }
 
 //param1: magnitude [-1, 1]
@@ -127,7 +133,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 {
 	float error = 0.0;
 	float turnSpeed = 0.0;
-	float kP = 0.18;
+	float kP = 0.06;//0.18;
 	//Put my angle into a range of [-180, 180]
 	float myAngle = gyro->GetAngle();
 	/*while(myAngle >= 180)
