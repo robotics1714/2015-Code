@@ -52,12 +52,12 @@ void DriveTrain::Drive(float x, float y, float rot)
 			currentHeading += 360;
 		}*/
 		//Find the appropriate amount of turn
-		rotation = 0;//GetTurnSpeed(currentHeading);
+		rotation = GetTurnSpeed(currentHeading);
 	}
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
 	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, /*gyro->GetAngle()*-1*/0.0);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-4/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 }
 
@@ -152,7 +152,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 {
 	float error = 0.0;
 	float turnSpeed = 0.0;
-	float kP = 0.005;//0.18;
+	float kP = 0.07;
 	//Put my angle into a range of [-180, 180]
 	float myAngle = gyro->GetAngle();
 	/*while(myAngle >= 180)
