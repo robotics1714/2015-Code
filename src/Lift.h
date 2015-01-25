@@ -10,6 +10,7 @@
 #include "AnalogInput.h"
 #include "MORESubsystem.h"
 #include "GlobalDefines.h"
+#include "Spatula.h"
 
 #define DISTANCE_PER_PULSE 0.01 //TODO calculate this, it should be (distance the lift travels)/(encoder pulses to travel entire lift)
 #define HEIGHT_OF_TOTE 400//Pot values that relate to the height of the platform/totes
@@ -25,15 +26,20 @@ private:
 	DigitalInput* upperBound;
 	DigitalInput* lowerBound;
 	AnalogInput* liftPot;
+	Spatula* spat;
 	//bool movingUpLevel;
 	//bool movingDownLevel;
 	bool movingToLevel;
 	int currentLevel;
 	int levelPotValues[7];
 	float integral;
+	int acquireState;
 public:
 	static const int FULL_SPEED_UP = -1;
 	static const int FULL_SPEED_DOWN = 1;
+
+	static const int ACQUIRE_GRAB_STATE = 1;
+	static const int ACQUIRE_LIFT_STATE = 2;
 
 	Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 			int upperBoundPort, int lowerBoundPort, string name);
@@ -50,6 +56,9 @@ public:
 
 	bool MoveToLevel();
 	void StartMoveToLevel(int level);
+
+	int Acquire();
+	void StartAcquire();
 
 	//This functions will check if the bottom limit switch is pressed. If it is reset the encoder
 	//void CheckLowerBoundLimit();

@@ -90,24 +90,6 @@ private:
 		currentInstr.param4 = 4.5;//turn for 7 seconds
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Go Forward"));
-
-		//Second step, drive to the right for 0.5 seconds
-		/*currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.5;//half speed
-		currentInstr.param2 = 90.0;//Go to the right
-		currentInstr.param3 = 0;//no rotation
-		currentInstr.param4 = 0.5;
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Strafe Right"));
-
-		//Third step, turn for 1 second
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.0;//half speed
-		currentInstr.param2 = 0.0;//No rotation
-		currentInstr.param3 = -0.5;//half speed rotation
-		currentInstr.param4 = 1;
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Turn"));*/
 	}
 
 	void AutonomousPeriodic()
@@ -165,41 +147,6 @@ private:
 			twist = rightStick->GetTwist()*(0.6);
 		}
 
-		/*if(rightStick->GetRawButton(11))
-		{
-			lift->Move(0.25);
-		}
-		else if(rightStick->GetRawButton(12))
-		{
-			lift->Move(-0.25);
-		}
-		else if(!lift->MoveToLevel())
-		{
-			lift->Move(0);
-		}
-
-		if(rightStick->GetRawButton(7))
-		{
-			lift->StartMoveToLevel(1);
-		}
-		else if(rightStick->GetRawButton(8))
-		{
-			lift->StartMoveToLevel(2);
-		}
-		else if(rightStick->GetRawButton(9))
-		{
-			lift->StartMoveToLevel(6);
-		}
-
-		if(rightStick->GetRawButton(3))
-		{
-			spatula->StartMoveDown();
-		}
-		else if(rightStick->GetRawButton(4))
-		{
-			spatula->StartMoveUp();
-		}*/
-
 		//Change between tank and mecanum drive
 		if(leftStick->GetRawButton(2) && !leftTwoButtonPressed)
 		{
@@ -220,13 +167,15 @@ private:
 			drive->TankDrive(leftStick->GetY(), rightStick->GetY());
 		}
 
-		///Ping Distance
-		//sonar->Ping();
-		//lift->MoveToLevel();
-		//lift->CheckLowerBoundLimit();
+		//These functions are for state machines and need to be called every call of the function
+		//but will only do something when their respective start function is called
 		rake->MoveForTime();
 		spatula->MoveDown();
 		spatula->MoveUp();
+		lift->MoveToLevel();
+		lift->Acquire();
+
+		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("X", rightStick->GetX());
 		SmartDashboard::PutNumber("Y", rightStick->GetY()*-1);
 		SmartDashboard::PutNumber("Twist", rightStick->GetTwist());

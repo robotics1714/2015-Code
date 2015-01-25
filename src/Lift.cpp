@@ -16,6 +16,8 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 	movingToLevel = false;
 	integral = 0;
 
+	acquireState = IDLE_STATE;
+
 	currentLevel = 0;
 	levelPotValues[0] = 0;
 	levelPotValues[1] = HEIGHT_OF_SCORING_PLAT + (HEIGHT_OF_TOTE) + 3;
@@ -130,6 +132,40 @@ bool Lift::MoveToLevel()
 	SmartDashboard::PutNumber("motorOutput", motorOutput);
 
 	return movingToLevel;
+}
+
+void Lift::StartAcquire()
+{
+	if(acquireState == IDLE_STATE)
+	{
+		//Set the state to the grab state and start grabbin'
+		acquireState = ACQUIRE_GRAB_STATE;
+		spat->StartMoveDown();
+	}
+}
+
+int Lift::Acquire()
+{
+	switch(acquireState)
+	{
+	case ACQUIRE_GRAB_STATE:
+		//Move down the spatula, when it's all the way down, start raising the lift to level 1
+		if(!spat->MoveDown())
+		{
+			acquireState = ACQUIRE_LIFT_STATE;
+			StartMoveToLevel(1);
+		}
+		break;
+	case ACQUIRE_LIFT_STATE:
+		//Move the lift to level 1, when it gets there, we done
+		if(!movingToLevel)
+		{
+			acquireState = IDLE_STATE;
+		}
+		break;
+	}
+
+	return acquireState;
 }
 
 /*void Lift::StartMoveUpLevel()
