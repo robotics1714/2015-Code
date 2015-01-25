@@ -28,6 +28,8 @@
 
 #define LEFT_BUMP_LIMIT_PORT 1
 #define RIGHT_BUMP_LIMIT_PORT 0
+#define DRIVE_ULTRASONIC_OUT 8
+#define DRIVE_ULTRASONIC_IN 9
 
 #define GYRO_PORT 0
 
@@ -41,7 +43,7 @@ private:
 	Spatula* spatula;
 	Lift* lift;
 	Rake* rake;
-	Gyro* gyro;
+	AnalogInput* portOne;
 
 	//Keeps track if the robot has mecanum drive
 	bool mecanum;
@@ -54,14 +56,14 @@ private:
 	{
 		lw = LiveWindow::GetInstance();
 
+		portOne = new AnalogInput(1);
+
 		rightStick = new Joystick(0);
 		leftStick = new Joystick(1);
 
-		gyro = new Gyro(GYRO_PORT);
-
 		drive = new DriveTrain(FRONT_LEFT_DRIVE_PORT, REAR_LEFT_DRIVE_PORT,
 				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
-				RIGHT_BUMP_LIMIT_PORT, gyro, "MECANUM");
+				RIGHT_BUMP_LIMIT_PORT, DRIVE_ULTRASONIC_OUT, DRIVE_ULTRASONIC_IN, GYRO_PORT, "MECANUM");
 
 		drive->getGyro()->Reset();
 
@@ -160,7 +162,7 @@ private:
 		}
 		if((fabs(rightStick->GetTwist()) > 0.12) && (!rightStick->GetRawButton(1)))
 		{
-			twist = rightStick->GetTwist()*(-0.6);
+			twist = rightStick->GetTwist()*(0.6);
 		}
 
 		/*if(rightStick->GetRawButton(11))
@@ -231,6 +233,8 @@ private:
 		SmartDashboard::PutNumber("Distance: ", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
 		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());
+		SmartDashboard::PutNumber("AI 2:", lift->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("AI 1:", portOne->GetAverageValue());
 	}
 
 	void TestPeriodic()

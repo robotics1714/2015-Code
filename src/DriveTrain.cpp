@@ -2,12 +2,13 @@
 
 DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
 		int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
-		Gyro* scope, string name) : MORESubsystem(name)
+		int gyroPort, string name) : MORESubsystem(name)
 {
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
-	gyro = scope;
-	gyro->SetSensitivity(GYRO_SENSITIVITY);
+	gyro = new Gyro(gyroPort);
+	gyro->SetDeadband(0.005);
+	//gyro->SetSensitivity(GYRO_SENSITIVITY);
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
 	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
@@ -51,11 +52,12 @@ void DriveTrain::Drive(float x, float y, float rot)
 			currentHeading += 360;
 		}*/
 		//Find the appropriate amount of turn
-		rotation = GetTurnSpeed(currentHeading);
+		rotation = 0;//GetTurnSpeed(currentHeading);
 	}
+	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
 	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-1/*0.0*/);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rotation, /*gyro->GetAngle()*-1*/0.0);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 }
 
@@ -150,7 +152,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 {
 	float error = 0.0;
 	float turnSpeed = 0.0;
-	float kP = 0.06;//0.18;
+	float kP = 0.005;//0.18;
 	//Put my angle into a range of [-180, 180]
 	float myAngle = gyro->GetAngle();
 	/*while(myAngle >= 180)
@@ -163,12 +165,14 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 	}*/
 
 	//Calculate the error
-	error = setPoint - myAngle;
+	error = myAngle - setPoint;
 
 	SmartDashboard::PutNumber("myAngle", myAngle);
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
 	turnSpeed = (error * kP);
+
+	SmartDashboard::PutNumber("turn speed", turnSpeed);
 
 	return turnSpeed;
 }

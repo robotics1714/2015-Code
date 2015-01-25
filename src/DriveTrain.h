@@ -44,7 +44,7 @@ public:
 	//Constructor/Deconstructor
 	DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
 			int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
-			Gyro* scope, string name);
+			int gyroPort, string name);
 	~DriveTrain();
 
 	void Drive(float x, float y, float rot);
