@@ -7,6 +7,7 @@
 #include "Spatula.h"
 #include "Rake.h"
 #include "Lift.h"
+#include "XboxController.h"
 
 #define FRONT_LEFT_DRIVE_PORT 0
 #define REAR_LEFT_DRIVE_PORT 1
