@@ -34,7 +34,7 @@ Lift::~Lift()
 	delete liftEncoder;
 	delete upperBound;
 	delete lowerBound;
-
+	delete spat;
 }
 
 bool Lift::Move(float speed)

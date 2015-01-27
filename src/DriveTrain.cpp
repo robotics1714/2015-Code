@@ -7,8 +7,8 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
 	gyro = new Gyro(gyroPort);
-	gyro->SetDeadband(0.005);
-	//gyro->SetSensitivity(GYRO_SENSITIVITY);
+	gyro->SetDeadband(0.001);
+	gyro->SetSensitivity(GYRO_SENSITIVITY);
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
 	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
@@ -57,8 +57,10 @@ void DriveTrain::Drive(float x, float y, float rot)
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
 	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-4/*0.0*/);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-1/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
+
+	SmartDashboard::PutNumber("Ultrasonic:", sonic->GetRangeInches());
 }
 
 void DriveTrain::TankDrive(float left, float right)
@@ -131,7 +133,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	//Drive until the unltrasonic sensor says we are within 5 inches or either of the limit switches are pressed
 	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
 	{
-		if((sonic->GetRangeInches() > 5) && (leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
+		if((sonic->GetRangeInches() > 7.5) && (leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
 		{
 			drive->MecanumDrive_Polar(magnitude, dir, turnSpeed);
 			return (int)(true);
@@ -152,7 +154,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 {
 	float error = 0.0;
 	float turnSpeed = 0.0;
-	float kP = 0.07;
+	float kP = 0.0175;
 	//Put my angle into a range of [-180, 180]
 	float myAngle = gyro->GetAngle();
 	/*while(myAngle >= 180)

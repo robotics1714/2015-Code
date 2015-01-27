@@ -54,6 +54,7 @@ public:
 	Gyro* getGyro(){return gyro;}
 	double getAutoTimer(){return autoTimer->Get();}
 	float GetCurrentHeading(){return currentHeading;}
+Ultrasonic* GetUltrasonic(){return sonic;}
 
 	//MORESubsystem autonomous functions
 	void SetUpAuto(AutoInstructions instructions) override;

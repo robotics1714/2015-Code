@@ -27,9 +27,9 @@
 #define SPATULA_POT_PORT 3
 
 #define LEFT_BUMP_LIMIT_PORT 1
-#define RIGHT_BUMP_LIMIT_PORT 0
-#define DRIVE_ULTRASONIC_OUT 8
-#define DRIVE_ULTRASONIC_IN 9
+#define RIGHT_BUMP_LIMIT_PORT 7
+#define DRIVE_ULTRASONIC_OUT 9
+#define DRIVE_ULTRASONIC_IN 8
 
 #define GYRO_PORT 0
 
@@ -82,14 +82,14 @@ private:
 
 		AutoInstructions currentInstr;
 
-		//First step, drive forward for 7 seconds
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.75;//Go half speed
+		//First step, drive backwards towards the step until we are 7.5 inches away
+		currentInstr.flags = DriveTrain::ULTRASONIC;
+		currentInstr.param1 = -0.25;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 4.5;//turn for 7 seconds
+		currentInstr.param4 = 0.0;//Time doesn't matter for this, so set it to 0
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Go Forward"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
 	}
 
 	void AutonomousPeriodic()
@@ -106,19 +106,6 @@ private:
 			//Print out the step of autonomous to smart dashboard
 			SmartDashboard::PutString("Auto Step:", autoSteps.front()->GetStepName());
 		}
-		/*if(stick->GetRawButton(1))
-		{
-			AutoInstructions currentInstr;
-
-			//First step, drive forward for 7 seconds
-			currentInstr.flags = DriveTrain::TIME;
-			currentInstr.param1 = 0.55;//Go half speed
-			currentInstr.param2 = 0.0;//Go straight
-			currentInstr.param3 = 0.0;//No rotation
-			currentInstr.param4 = 7;//turn for 7 seconds
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(drive, currentInstr, "Go Forward"));
-		}*/
 		SmartDashboard::PutNumber("Auto Timer", drive->getAutoTimer());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
 	}
