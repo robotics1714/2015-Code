@@ -103,11 +103,12 @@ private:
 			{
 				//When the step finishes, remove it from the queue
 				autoSteps.pop();
+				SmartDashboard::PutString("Done", "Now");
 			}
 			//Print out the step of autonomous to smart dashboard
 			SmartDashboard::PutString("Auto Step:", autoSteps.front()->GetStepName());
 		}
-		SmartDashboard::PutNumber("Auto Timer", drive->getAutoTimer());
+		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
 	}
 
