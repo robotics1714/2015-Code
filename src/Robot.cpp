@@ -38,8 +38,8 @@ class Robot: public IterativeRobot
 {
 private:
 	LiveWindow *lw;
-	Joystick* rightStick;
-	Joystick* leftStick;
+	Joystick* stick;
+	XboxController* xbox;
 	DriveTrain* drive;
 	Spatula* spatula;
 	Lift* lift;
@@ -48,7 +48,7 @@ private:
 
 	//Keeps track if the robot has mecanum drive
 	bool mecanum;
-	bool leftTwoButtonPressed;
+	//bool leftTwoButtonPressed;
 
 	//For autonomous
 	queue<AutoStep*> autoSteps;
@@ -59,8 +59,8 @@ private:
 
 		portOne = new AnalogInput(1);
 
-		rightStick = new Joystick(0);
-		leftStick = new Joystick(1);
+		stick = new Joystick(0);
+		xbox = new XboxController(new Joystick(1));
 
 		drive = new DriveTrain(FRONT_LEFT_DRIVE_PORT, REAR_LEFT_DRIVE_PORT,
 				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
@@ -74,7 +74,7 @@ private:
 		rake = new Rake(RAKE_WINCH_DEVICE_NUMBER, RAKE_LIMIT_PORT, "RAKE");
 
 		mecanum = true;
-		leftTwoButtonPressed = false;
+		//leftTwoButtonPressed = false;
 	}
 
 	void AutonomousInit()
@@ -122,26 +122,26 @@ private:
 		x = y = twist = 0.0;
 
 		//Filter out values coming from the joystick not returning to center
-		if(fabs(rightStick->GetX()) > 0.12)
+		if(fabs(stick->GetX()) > 0.12)
 		{
-			x = rightStick->GetX();
+			x = stick->GetX();
 		}
-		if(fabs(rightStick->GetY()) > 0.12)
+		if(fabs(stick->GetY()) > 0.12)
 		{
-			y = rightStick->GetY();
+			y = stick->GetY();
 		}
-		if((fabs(rightStick->GetTwist()) > 0.12) && (!rightStick->GetRawButton(1)))
+		if((fabs(stick->GetTwist()) > 0.12) && (!stick->GetRawButton(1)))
 		{
-			twist = rightStick->GetTwist()*(0.6);
+			twist = stick->GetTwist()*(0.6);
 		}
 
-		//Change between tank and mecanum drive
-		if(leftStick->GetRawButton(2) && !leftTwoButtonPressed)
+		/*//Change between tank and mecanum drive
+		if(xbox->Get && !leftTwoButtonPressed)
 		{
 			mecanum = !mecanum;
 			leftTwoButtonPressed = true;
 		}
-		if(!leftStick->GetRawButton(2))
+		if(!xbox->GetRawButton(2))
 		{
 			leftTwoButtonPressed = false;
 		}
@@ -152,8 +152,10 @@ private:
 		}
 		else
 		{
-			drive->TankDrive(leftStick->GetY(), rightStick->GetY());
-		}
+			drive->TankDrive(xbox->GetY(), stick->GetY());
+		}*/
+
+		drive->Drive(x, y, twist);
 
 		//These functions are for state machines and need to be called every call of the function
 		//but will only do something when their respective start function is called
@@ -164,9 +166,9 @@ private:
 		lift->Acquire();
 
 		//Print out information for the driver/debugger
-		SmartDashboard::PutNumber("X", rightStick->GetX());
-		SmartDashboard::PutNumber("Y", rightStick->GetY()*-1);
-		SmartDashboard::PutNumber("Twist", rightStick->GetTwist());
+		SmartDashboard::PutNumber("X", stick->GetX());
+		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
+		SmartDashboard::PutNumber("Twist", stick->GetTwist());
 		SmartDashboard::PutNumber("Distance: ", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
 		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());
