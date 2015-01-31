@@ -1,4 +1,5 @@
 #include "DriveTrain.h"
+#include <fstream>
 
 DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
 		int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
@@ -131,11 +132,12 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	//Drive until the unltrasonic sensor says we are within 5 inches or either of the limit switches are pressed
 	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
 	{
-		double setPoint = 12.0;
+		double setPoint = 5.0;
 		double curLoc = sonic->GetRangeInches();
 		double error, speed;
-		double kP = 0.075;
-		if((curLoc > setPoint) && (leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
+		double kP = 0.0156;
+		if((curLoc > setPoint) && (leftBumpSwitch->Get() == RELEASED) &&
+				(rightBumpSwitch->Get() == RELEASED) && (autoTimer->Get() < time))
 		{
 			error = curLoc - setPoint;
 			speed = error * kP * magnitude;
@@ -150,10 +152,27 @@ int DriveTrain::Auto(AutoInstructions instructions)
 		else
 		{
 			drive->MecanumDrive_Polar(0, 0, 0);
+			//Save the time
+			ofstream file("/home/lvuser/time.csv", ofstream::app);
+			file<<kP << "," <<autoTimer->Get();
+			if(rightBumpSwitch->Get() == PRESSED)
+			{
+				file<<",Right limit";
+			}
+			if(leftBumpSwitch->Get() == PRESSED)
+			{
+				file<<",Left limit";
+			}
+			if(sonic->GetRangeInches() < 5)
+			{
+				file<<",Ultrasonic";
+			}
+			file<<endl;
+			file.close();
 			return (int)(false);
 		}
 	}
-
+	SmartDashboard::PutNumber("AutoTimer", autoTimer->Get());
 	//if we get here, something went wrong, so return false
 	return (int)(false);
 }

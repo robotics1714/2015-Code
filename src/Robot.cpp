@@ -3,6 +3,7 @@
 #include <cmath>
 #include "WPILib.h"
 #include "AutoStep.h"
+#include "AutoTimer.h"
 #include "DriveTrain.h"
 #include "Spatula.h"
 #include "Rake.h"
@@ -88,12 +89,27 @@ private:
 
 		//First step, drive backwards towards the step until we are 7.5 inches away
 		currentInstr.flags = DriveTrain::ULTRASONIC;
-		currentInstr.param1 = -0.25;//Go quarter speed in reverse
+		currentInstr.param1 = -1;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 0.0;//Time doesn't matter for this, so set it to 0
+		currentInstr.param4 = 7.0;//7 second safety timer
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
+
+		//Second step, wait 0.5 seconds
+		currentInstr.flags = 0;
+		currentInstr.param1 = 0.5;//Time to wait. the rest of the params are unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+
+		//Third step, drive forwards for 1 second
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0.5;//Go half speed
+		currentInstr.param2 = 0.0;//Go straight
+		currentInstr.param3 = 0.0;//No rotation
+		currentInstr.param4 = 0.5;//Go for 1 second
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
 	}
 
 	void AutonomousPeriodic()
@@ -101,6 +117,8 @@ private:
 		//Check if there are still steps in the queue
 		if(!autoSteps.empty())
 		{
+			//Print out the step of autonomous to smart dashboard
+			SmartDashboard::PutString("Auto Step:", autoSteps.front()->GetStepName());
 			//Perform the current auto action until it completes
 			if(!autoSteps.front()->PerformStep())
 			{
@@ -108,8 +126,6 @@ private:
 				autoSteps.pop();
 				SmartDashboard::PutString("Done", "Now");
 			}
-			//Print out the step of autonomous to smart dashboard
-			SmartDashboard::PutString("Auto Step:", autoSteps.front()->GetStepName());
 		}
 		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
@@ -176,6 +192,7 @@ private:
 		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
 		SmartDashboard::PutNumber("Left Limit", drive->GetLeftLimit()->Get());
 		SmartDashboard::PutNumber("Right limit", drive->GetRightLimit()->Get());
+		SmartDashboard::PutString("Hello", "Hello World");
 	}
 
 	void TestPeriodic()
