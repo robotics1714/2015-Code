@@ -7,38 +7,69 @@
 
 #include "Rake.h"
 
-Rake::Rake(int talonDeviceNumber, int limitPort, string name) : MORESubsystem(name)
+Rake::Rake(int talonDeviceNumber, int solenoidPortNumber, int leftLimitPort, int rightLimitPort, string name) : MORESubsystem(name)
 {
-	winch = new CANTalon(talonDeviceNumber);
-	upperLimit = new DigitalInput(limitPort);
-	moveTimer = new Timer();
-	moveTimeSpeed = 0;
-	moveTimeDuration = 0;
-	movingForTime = false;
+	drawIn = new CANTalon(talonDeviceNumber);
+	actuateSolenoid = new Solenoid(solenoidPortNumber);
+	leftDrawInSwitch = new DigitalInput(leftLimitPort);
+	rightDrawInSwitch = new DigitalInput(rightLimitPort);
+	drawInSpeed = 0;
+	drawingIn = false;
 }
 
 Rake::~Rake()
 {
-	delete winch;
-	delete moveTimer;
+	delete drawIn;
+	delete actuateSolenoid;
+	delete leftDrawInSwitch;
+	delete rightDrawInSwitch;
 }
 
 bool Rake::Move(float speed)
 {
-
-	if((speed > 0) && (upperLimit->Get() == PRESSED))
+	//If either limit switch is pressed, stop moving and return false
+	if((leftDrawInSwitch->Get() == PRESSED) || (rightDrawInSwitch->Get() == PRESSED))
 	{
-		winch->Set(0);
+		drawIn->Set(0);
 		return false;
 	}
 	else
 	{
-		winch->Set(speed);
+		drawIn->Set(speed);
 		return true;
 	}
 }
 
-void Rake::StartMoveForTime(float speed, float time)
+void Rake::StartDrawIn(float speed)
+{
+	drawingIn = true;
+	drawInSpeed = speed;
+}
+
+bool Rake::DrawIn()
+{
+	if(drawingIn)
+	{
+		if(!Move(drawInSpeed))
+		{
+			drawingIn = false;
+		}
+	}
+
+	return drawingIn;
+}
+
+void Rake::MoveUp()
+{
+	actuateSolenoid->Set(true);
+}
+
+void Rake::MoveDown()
+{
+	actuateSolenoid->Set(false);
+}
+
+/*void Rake::StartMoveForTime(float speed, float time)
 {
 	//Make sure the program is not already moving for time
 	if(!movingForTime)
@@ -78,29 +109,26 @@ bool Rake::MoveForTime()
 	}
 
 	return movingForTime;
-}
+}*/
 
 void Rake::Stop()
 {
-	movingForTime = false;
-	moveTimeSpeed = 0;
-	moveTimeDuration = 0;
+	drawingIn = false;
+	drawInSpeed = 0;
 	Move(0);
 
 }
 
 //param1: speed
-//param2: duration
-//param3-param4: unused
+//param2-param4: unused
 void Rake::SetUpAuto(AutoInstructions instructions)
 {
 	float speed = instructions.param1;
-	float duration = instructions.param2;
 
-	StartMoveForTime(speed, duration);
+	StartDrawIn(speed);
 }
 
 int Rake::Auto(AutoInstructions instructions)
 {
-	return (int)(MoveForTime());
+	return (int)(DrawIn());
 }

@@ -93,7 +93,16 @@ public:
 	/**
 	 * GetUltrasonic returns the value of the Ultrasonic sensor at an instant.
 	 */
-Ultrasonic* GetUltrasonic(){return sonic;}
+	Ultrasonic* GetUltrasonic(){return sonic;}
+
+	/**
+	 * @return Returns an instance of the left limit switch
+	 */
+	DigitalInput* GetLeftLimit(){return leftBumpSwitch;}
+	/**
+	 * @return Returns an instance of the right limit switch
+	 */
+	DigitalInput* GetRightLimit(){return rightBumpSwitch;}
 
 	/**
 	 * SetUpAuto sets up the autonomous steps.

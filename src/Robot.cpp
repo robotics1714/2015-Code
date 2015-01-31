@@ -14,8 +14,10 @@
 #define FRONT_RIGHT_DRIVE_PORT 2
 #define REAR_RIGHT_DRIVE_PORT 3
 
-#define RAKE_WINCH_DEVICE_NUMBER 0
-#define RAKE_LIMIT_PORT 0
+#define RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER 0
+#define RAKE_ACTUATING_SOLENOID_PORT 0
+#define RAKE_LEFT_LIMIT_PORT 0
+#define RAKE_RIGHT_LIMIT_PORT 1
 
 #define LIFT_MOTOR_DEVICE_NUMBER 1
 #define LIFT_POT_PORT 2
@@ -27,8 +29,8 @@
 #define SPATULA_MOTOR_DEVICE_NUMBER 2
 #define SPATULA_POT_PORT 3
 
-#define LEFT_BUMP_LIMIT_PORT 1
-#define RIGHT_BUMP_LIMIT_PORT 7
+#define LEFT_BUMP_LIMIT_PORT 7
+#define RIGHT_BUMP_LIMIT_PORT 6
 #define DRIVE_ULTRASONIC_OUT 9
 #define DRIVE_ULTRASONIC_IN 8
 
@@ -71,7 +73,8 @@ private:
 		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_POT_PORT, "SPATULA");
 		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_POT_PORT, LIFT_ENCO_A_PORT, LIFT_ENCO_B_PORT,
 				LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT, "LIFT");
-		rake = new Rake(RAKE_WINCH_DEVICE_NUMBER, RAKE_LIMIT_PORT, "RAKE");
+		rake = new Rake(RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER, RAKE_ACTUATING_SOLENOID_PORT,
+				RAKE_LEFT_LIMIT_PORT, RAKE_RIGHT_LIMIT_PORT, "RAKE");
 
 		mecanum = true;
 		//leftTwoButtonPressed = false;
@@ -160,21 +163,19 @@ private:
 
 		//These functions are for state machines and need to be called every call of the function
 		//but will only do something when their respective start function is called
-		rake->MoveForTime();
+		rake->DrawIn();
 		spatula->MoveDown();
 		spatula->MoveUp();
 		lift->MoveToLevel();
 		lift->Acquire();
 
 		//Print out information for the driver/debugger
-		SmartDashboard::PutNumber("X", stick->GetX());
-		SmartDashboard::PutNumber("Y", stick->GetY()*-1);
-		SmartDashboard::PutNumber("Twist", stick->GetTwist());
-		SmartDashboard::PutNumber("Distance: ", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
-		SmartDashboard::PutNumber("Rate: ", lift->GetEnco()->GetRate());
 		SmartDashboard::PutNumber("AI 2:", lift->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("AI 1:", portOne->GetAverageValue());
+		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
+		SmartDashboard::PutNumber("Left Limit", drive->GetLeftLimit()->Get());
+		SmartDashboard::PutNumber("Right limit", drive->GetRightLimit()->Get());
 	}
 
 	void TestPeriodic()

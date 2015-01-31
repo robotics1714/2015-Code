@@ -131,11 +131,11 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	//Drive until the unltrasonic sensor says we are within 5 inches or either of the limit switches are pressed
 	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
 	{
-		double setPoint = 10.0;
+		double setPoint = 12.0;
 		double curLoc = sonic->GetRangeInches();
 		double error, speed;
 		double kP = 0.075;
-		if((curLoc > (setPoint+2)) && (leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
+		if((curLoc > setPoint) && (leftBumpSwitch->Get() == RELEASED) && (rightBumpSwitch->Get() == RELEASED))
 		{
 			error = curLoc - setPoint;
 			speed = error * kP * magnitude;

@@ -12,52 +12,59 @@
 #include "GlobalDefines.h"
 #include "CANTalon.h"
 #include "DigitalInput.h"
-#include "Timer.h"
+#include "Solenoid.h"
 
 class Rake : public MORESubsystem
 {
 private:
-	CANTalon* winch;
-	Timer* moveTimer;
-	DigitalInput* upperLimit;
-	float moveTimeSpeed;
-	float moveTimeDuration;
-	bool movingForTime;
+	CANTalon* drawIn;
+	Solenoid* actuateSolenoid;
+	//Timer* moveTimer;
+	DigitalInput* leftDrawInSwitch;
+	DigitalInput* rightDrawInSwitch;
+	float drawInSpeed;
+	bool drawingIn;
+	/*float moveTimeDuration;
+	bool movingForTime;*/
 public:
 	/**
 	 *  Constructor for the Rake class.
 	 *  @param talonDeviceNumber The CAN device ID number for the TalonSRX that will control the rake.
-	 *  @param limitPort The upperbound limit switch that will stop the rake when it reaches the top.
+	 *  @param solenoidPortNumber The port on the PCM that the solenoid for actauting the rake is plugged in to
+	 *  @param leftLimitPort The limit switch that checks if the left side of the rake is in
+	 *  @param rightLimitPort The limit switch that check if the ride side of the rake is in
 	 *  @param name subsystem name.
 	 */
-	Rake(int talonDeviceNumber, int limitPort, string name);
+	Rake(int talonDeviceNumber, int solenoidPortNumber, int leftLimitPort, int rightLimitPort, string name);
 	/**
 	 * Deconstructor for the Rake class,
 	 */
 	~Rake();
 
-	///Speed of the winch
 	/**
-	* Moves the rake at set speed
+	* Moves the extensions on the rake in/out
 	*
-	* @param speed value of the speed that the Rake is moving
-	* @return returns false when the Rake hits the top limit switch and returns true when its moving.
+	* @param speed value of the speed that the extensions are moving
+	* @return returns false when the extension hits either limit switch and returns true when its moving.
 	*/
 	bool Move(float speed);
 
 	///Starts the movement timer
 	/**
-	 * Allows for the Rake to Move For time
-	 * @param speed the values of the speed that the Rake is moving
-	 * @param time the time in seconds that the Rake is moving
+	 * Draws in the extensions on the rake
+	 *
+	 * @param speed The speed that the extensions move in at
 	 */
-	void StartMoveForTime(float speed, float time);
+	void StartDrawIn(float speed);
 
 	/**
 	 * Move the Rake for time in seconds
-	 * @retun returns true when the Rake id moving and returns false when the Rake is done moving.
+	 * @retun Returns true when the extensions are moving in and false when they are done moving in
 	 */
-	bool MoveForTime();
+	bool DrawIn();
+
+	void MoveUp();
+	void MoveDown();
 
 	/**
 	 * Stops the Rake Motor
