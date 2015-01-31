@@ -52,7 +52,7 @@ public:
 	 * @param ultrasonicPingPort the port for the ultrasonic speaker for detecting the step.
 	 * @param ultrasonicEchoPort the port for the ultrasonic receiver for detecting the step.
 	 * @param gyroPort the port for the gyro to keep the robot at constant heading and for field centric capabilities.
-	 * @param  name the name of the subsystem.
+	 * @param name the name of the subsystem.
 	 *
 	 */
 	DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
