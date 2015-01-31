@@ -90,8 +90,6 @@ void DriveTrain::SetUpAuto(AutoInstructions instructions)
  *If the BUMP flag is set, the robot will drive with the set magnitude, direction, and rotation until
  *one of the two bump limit switches are pressed
  *
- *If both flags are set, the robot will drive with the set magnitude, direction, and rotation until
- *either of the above conditions for stopping are met
  */
 int DriveTrain::Auto(AutoInstructions instructions)
 {
