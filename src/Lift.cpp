@@ -140,7 +140,7 @@ void Lift::StartAcquire()
 	{
 		//Set the state to the grab state and start grabbin'
 		acquireState = ACQUIRE_GRAB_STATE;
-		spat->StartMoveDown();
+		spat->StartMoveUp();
 	}
 }
 
@@ -150,7 +150,7 @@ int Lift::Acquire()
 	{
 	case ACQUIRE_GRAB_STATE:
 		//Move down the spatula, when it's all the way down, start raising the lift to level 1
-		if(!spat->MoveDown())
+		if(!spat->MoveUp())
 		{
 			acquireState = ACQUIRE_LIFT_STATE;
 			StartMoveToLevel(1);
@@ -172,6 +172,7 @@ void Lift::Stop()
 {
 	//Stop the motor
 	liftMotor->Set(0);
+	spat->Stop();
 	//signal that the lift is not moving to level or aquiring
 	movingToLevel = false;
 	acquireState = IDLE_STATE;

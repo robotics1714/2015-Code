@@ -52,7 +52,7 @@ bool Spatula::MoveUp()
 		///Move up if the spatula isn't up already
 		if(pot->GetAverageValue() > SPATULA_UP)
 		{
-			rotaryMotor->Set(CURVE_OUT);
+			rotaryMotor->Set(CURVE_IN);
 		}
 		///Set Motor to 0
 		else
@@ -72,7 +72,7 @@ bool Spatula::MoveDown()
 		///Move down if the spatula isn't moving
 		if(pot->GetAverageValue() < SPATULA_DOWN)
 		{
-			rotaryMotor->Set(CURVE_IN);
+			rotaryMotor->Set(CURVE_OUT);
 		}
 		///Set Motor to 0
 		else
@@ -82,6 +82,13 @@ bool Spatula::MoveDown()
 		}
 	}
 	return movingDown;
+}
+
+void Spatula::Stop()
+{
+	rotaryMotor->Set(0);
+	movingUp = false;
+	movingDown = false;
 }
 
 void Spatula::SetUpAuto(AutoInstructions instructions)

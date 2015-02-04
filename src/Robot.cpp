@@ -76,7 +76,7 @@ private:
 		rake = new Rake(RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER, RAKE_ACTUATING_SOLENOID_PORT,
 				RAKE_DRAW_IN_LIMIT_PORT, "RAKE");
 
-		spatulaUp = true;
+		spatulaUp = false;
 		//leftTwoButtonPressed = false;
 	}
 

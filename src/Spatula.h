@@ -71,6 +71,11 @@ public:
 	void Rotate(float speed);
 
 	/**
+	 * Stops the spatula
+	 */
+	void Stop();
+
+	/**
 	 * @return Returns an instance of the potentiometer
 	 */
 	AnalogInput* GetPot(){return pot;}
