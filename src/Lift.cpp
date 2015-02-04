@@ -136,7 +136,7 @@ bool Lift::MoveToLevel()
 
 void Lift::StartAcquire()
 {
-	if(acquireState == IDLE_STATE)
+	if(acquireState == IDLE_STATE && !movingToLevel)
 	{
 		//Set the state to the grab state and start grabbin'
 		acquireState = ACQUIRE_GRAB_STATE;
@@ -166,6 +166,15 @@ int Lift::Acquire()
 	}
 
 	return acquireState;
+}
+
+void Lift::Stop()
+{
+	//Stop the motor
+	liftMotor->Set(0);
+	//signal that the lift is not moving to level or aquiring
+	movingToLevel = false;
+	acquireState = IDLE_STATE;
 }
 
 /*void Lift::StartMoveUpLevel()

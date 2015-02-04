@@ -111,6 +111,11 @@ public:
 	 */
 	void StartAcquire();
 
+	/**
+	 * stops all action on the lift
+	 */
+	void Stop();
+
 	//This functions will check if the bottom limit switch is pressed. If it is reset the encoder
 	//void CheckLowerBoundLimit();
 
@@ -122,6 +127,11 @@ public:
 	 * @return An instance of the lift potentiometer
 	 */
 	AnalogInput* GetPot(){return liftPot;}
+
+	/**
+	 * @return Returns whether or not the lift is moving to a level
+	 */
+	bool GetMovingToLevel(){return movingToLevel;}
 
 	//MORESubsystem auto functions
 	void SetUpAuto(AutoInstructions instructions) override;

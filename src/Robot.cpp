@@ -49,7 +49,7 @@ private:
 	AnalogInput* portOne;
 
 	//Keeps track if the robot has mecanum drive
-	bool mecanum;
+	bool spatulaUp;
 	//bool leftTwoButtonPressed;
 
 	//For autonomous
@@ -76,7 +76,7 @@ private:
 		rake = new Rake(RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER, RAKE_ACTUATING_SOLENOID_PORT,
 				RAKE_DRAW_IN_LIMIT_PORT, "RAKE");
 
-		mecanum = true;
+		spatulaUp = true;
 		//leftTwoButtonPressed = false;
 	}
 
@@ -174,6 +174,77 @@ private:
 			drive->TankDrive(xbox->GetY(), stick->GetY());
 		}*/
 
+		//Main driver controls
+		if(stick->GetRawButton(3))
+		{
+			//Aquire a tote/container
+			lift->StartAcquire();
+		}
+		if(stick->GetRawButton(4))
+		{
+			//Release the stack
+		}
+		if(stick->GetRawButton(7))
+		{
+			//Move the spatula up or down depending on where it is
+			if(spatulaUp)
+			{
+				//Move down
+				spatula->StartMoveDown();
+			}
+			else
+			{
+				//Move up
+				spatula->StartMoveUp();
+			}
+		}
+
+		//Second driver controls
+		if(xbox->IsAPressed())
+		{
+			//Go to level 0
+			lift->StartMoveToLevel(0);
+		}
+		else if((xbox->IsXPressed()) && (xbox->GetLeftTriggerAxis() < 0.5))
+		{
+			//Go to level 1
+			lift->StartMoveToLevel(1);
+		}
+		else if((xbox->IsYPressed()) && (xbox->GetLeftTriggerAxis() < 0.5))
+		{
+			//Go to level 2
+			lift->StartMoveToLevel(2);
+		}
+		else if((xbox->IsBPressed()) && (xbox->GetLeftTriggerAxis() < 0.5))
+		{
+			//Go to level 3
+			lift->StartMoveToLevel(3);
+		}
+		else if((xbox->IsXPressed()) && (xbox->GetLeftTriggerAxis() > 0.5))
+		{
+			//Go to level 4
+			lift->StartMoveToLevel(4);
+		}
+		else if((xbox->IsYPressed()) && (xbox->GetLeftTriggerAxis() > 0.5))
+		{
+			//Go to level 5
+			lift->StartMoveToLevel(5);
+		}
+		else if((xbox->IsBPressed()) && (xbox->GetLeftTriggerAxis() > 0.5))
+		{
+			//Go to level 6
+			lift->StartMoveToLevel(6);
+		}
+		if((xbox->GetLeftTriggerAxis() > 0.5) && (fabs(xbox->GetRightYAxis()) > 0.15))
+		{
+			//Tell the lift to stop if it is doing stuff and then have it move according to the right y axis
+			if((lift->GetMovingToLevel()) || (lift->Acquire() != IDLE_STATE))
+			{
+				lift->Stop();
+			}
+			lift->Move(xbox->GetRightYAxis());
+		}
+
 		drive->Drive(x, y, twist);
 
 		//These functions are for state machines and need to be called every call of the function
@@ -181,7 +252,7 @@ private:
 		rake->DrawIn();
 		spatula->MoveDown();
 		spatula->MoveUp();
-		lift->MoveToLevel();
+		lift->MoveToLevel();//This should only be called once per loop because the integral is time sensitive
 		lift->Acquire();
 
 		//Print out information for the driver/debugger
