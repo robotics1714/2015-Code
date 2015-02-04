@@ -7,12 +7,11 @@
 
 #include "Rake.h"
 
-Rake::Rake(int talonDeviceNumber, int solenoidPortNumber, int leftLimitPort, int rightLimitPort, string name) : MORESubsystem(name)
+Rake::Rake(int talonDeviceNumber, int solenoidPortNumber, int drawInPort, string name) : MORESubsystem(name)
 {
 	drawIn = new CANTalon(talonDeviceNumber);
 	actuateSolenoid = new Solenoid(solenoidPortNumber);
-	leftDrawInSwitch = new DigitalInput(leftLimitPort);
-	rightDrawInSwitch = new DigitalInput(rightLimitPort);
+	drawInSwitch = new DigitalInput(drawInPort);
 	drawInSpeed = 0;
 	drawingIn = false;
 }
@@ -21,14 +20,13 @@ Rake::~Rake()
 {
 	delete drawIn;
 	delete actuateSolenoid;
-	delete leftDrawInSwitch;
-	delete rightDrawInSwitch;
+	delete drawInSwitch;
 }
 
 bool Rake::Move(float speed)
 {
-	//If either limit switch is pressed, stop moving and return false
-	if((leftDrawInSwitch->Get() == PRESSED) || (rightDrawInSwitch->Get() == PRESSED))
+	//The draw in switch is activated, stop moving the rake in
+	if((drawInSwitch->Get() == PRESSED))
 	{
 		drawIn->Set(0);
 		return false;

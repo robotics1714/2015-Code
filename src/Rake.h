@@ -20,8 +20,7 @@ private:
 	CANTalon* drawIn;
 	Solenoid* actuateSolenoid;
 	//Timer* moveTimer;
-	DigitalInput* leftDrawInSwitch;
-	DigitalInput* rightDrawInSwitch;
+	DigitalInput* drawInSwitch;
 	float drawInSpeed;
 	bool drawingIn;
 	/*float moveTimeDuration;
@@ -31,11 +30,10 @@ public:
 	 *  Constructor for the Rake class.
 	 *  @param talonDeviceNumber The CAN device ID number for the TalonSRX that will control the rake.
 	 *  @param solenoidPortNumber The port on the PCM that the solenoid for actauting the rake is plugged in to
-	 *  @param leftLimitPort The limit switch that checks if the left side of the rake is in
-	 *  @param rightLimitPort The limit switch that check if the ride side of the rake is in
+	 *  @param drawInPort The magnetic switch that will sense if the poles are drawn all the way in
 	 *  @param name subsystem name.
 	 */
-	Rake(int talonDeviceNumber, int solenoidPortNumber, int leftLimitPort, int rightLimitPort, string name);
+	Rake(int talonDeviceNumber, int solenoidPortNumber, int drawInPort, string name);
 	/**
 	 * Deconstructor for the Rake class,
 	 */
@@ -59,12 +57,23 @@ public:
 
 	/**
 	 * Move the Rake for time in seconds
-	 * @retun Returns true when the extensions are moving in and false when they are done moving in
+	 * @return Returns true when the extensions are moving in and false when they are done moving in
 	 */
 	bool DrawIn();
 
+	/**
+	 * Actuates the rake up
+	 */
 	void MoveUp();
+	/**
+	 * Actuates the rake down
+	 */
 	void MoveDown();
+
+	/**
+	 * @return Returns an instance of the magnetic switch
+	 */
+	DigitalInput* getDrawInSwitch(){return drawInSwitch;}
 
 	/**
 	 * Stops the Rake Motor
