@@ -173,7 +173,7 @@ void Lift::Stop()
 	//Stop the motor
 	liftMotor->Set(0);
 	spat->Stop();
-	//signal that the lift is not moving to level or aquiring
+	//signal that the lift is not moving to level or acquiring
 	movingToLevel = false;
 	acquireState = IDLE_STATE;
 }
