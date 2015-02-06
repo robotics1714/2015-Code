@@ -48,8 +48,8 @@ private:
 	Rake* rake;
 	AnalogInput* portOne;
 
-	//Keeps track if the robot has mecanum drive
 	bool spatulaUp;
+	bool spatulaMoveButtonPressed;//Used to make sure the spatulaUp variable is toggled only once per button press
 	//bool leftTwoButtonPressed;
 
 	//For autonomous
@@ -77,6 +77,8 @@ private:
 				RAKE_DRAW_IN_LIMIT_PORT, "RAKE");
 
 		spatulaUp = false;
+		spatulaMoveButtonPressed = false;
+
 		//leftTwoButtonPressed = false;
 	}
 
@@ -184,7 +186,7 @@ private:
 		{
 			//Release the stack
 		}
-		if(stick->GetRawButton(7))
+		if(stick->GetRawButton(7) && !spatulaMoveButtonPressed)
 		{
 			//Move the spatula up or down depending on where it is
 			if(spatulaUp)
@@ -197,7 +199,10 @@ private:
 				//Move up
 				spatula->StartMoveUp();
 			}
+			//Toggle the spatulaUp variable because it has changed states
+			spatulaUp = !spatulaUp;
 		}
+		spatulaMoveButtonPressed = stick->GetRawButton(7);
 
 		//Second driver controls
 		if(xbox->IsAPressed())
