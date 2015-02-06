@@ -46,7 +46,6 @@ private:
 	Spatula* spatula;
 	Lift* lift;
 	Rake* rake;
-	AnalogInput* portOne;
 
 	bool spatulaUp;
 	bool spatulaMoveButtonPressed;//Used to make sure the spatulaUp variable is toggled only once per button press
@@ -58,8 +57,6 @@ private:
 	void RobotInit()
 	{
 		lw = LiveWindow::GetInstance();
-
-		portOne = new AnalogInput(1);
 
 		stick = new Joystick(0);
 		xbox = new XboxController(new Joystick(1));
@@ -262,12 +259,9 @@ private:
 
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
-		SmartDashboard::PutNumber("AI 2:", lift->GetPot()->GetAverageValue());
-		SmartDashboard::PutNumber("AI 1:", portOne->GetAverageValue());
 		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
 		SmartDashboard::PutNumber("Left Limit", drive->GetLeftLimit()->Get());
 		SmartDashboard::PutNumber("Right limit", drive->GetRightLimit()->Get());
-		SmartDashboard::PutString("Hello", "Hello World");
 	}
 
 	void TestPeriodic()
