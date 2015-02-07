@@ -114,19 +114,39 @@ void Rake::Stop()
 	drawingIn = false;
 	drawInSpeed = 0;
 	Move(0);
-
 }
 
 //param1: speed
 //param2-param4: unused
 void Rake::SetUpAuto(AutoInstructions instructions)
 {
-	float speed = instructions.param1;
+	if((instructions.flags & AUTO_DRAW_IN) == AUTO_DRAW_IN)
+	{
+		float speed = instructions.param1;
 
-	StartDrawIn(speed);
+		StartDrawIn(speed);
+	}
 }
 
 int Rake::Auto(AutoInstructions instructions)
 {
-	return (int)(DrawIn());
+	if((instructions.flags & AUTO_DRAW_IN) == AUTO_DRAW_IN)
+	{
+		return (int)(DrawIn());
+	}
+	if((instructions.flags & AUTO_MOVE_UP) == AUTO_MOVE_UP)
+	{
+		MoveUp();
+		//Return false right away because the MoveUp function only needs to be called once to work
+		return (int)false;
+	}
+	if((instructions.flags & AUTO_MOVE_DOWN) == AUTO_MOVE_DOWN)
+	{
+		MoveDown();
+		//Return false right away because the MoveDown function only needs to be called once to work
+		return (int)false;
+	}
+
+	//If we got here, something went wrong, so return false
+	return (int)false;
 }

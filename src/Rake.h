@@ -26,6 +26,9 @@ private:
 	/*float moveTimeDuration;
 	bool movingForTime;*/
 public:
+	static const int AUTO_DRAW_IN = 1;/**<Autonomous flag to tell the program to draw in the extensions */
+	static const int AUTO_MOVE_UP = 2;/**<Autonomous flag to tell the program to move the rake up */
+	static const int AUTO_MOVE_DOWN = 4;/**<Autonomous flag to tell the program to move the rake down */
 	/**
 	 *  Constructor for the Rake class.
 	 *  @param talonDeviceNumber The CAN device ID number for the TalonSRX that will control the rake.
