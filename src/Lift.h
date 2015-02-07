@@ -130,6 +130,16 @@ public:
 	AnalogInput* GetPot(){return liftPot;}
 
 	/**
+	 * @return An instance of the upper bound limit switch
+	 */
+	DigitalInput* getUpperBound(){return upperBound;}
+
+	/**
+	 * @return An instance of the lower bound limit switch
+	 */
+	DigitalInput* getLowerBound(){return lowerBound;}
+
+	/**
 	 * @return Returns whether or not the lift is moving to a level
 	 */
 	bool GetMovingToLevel(){return movingToLevel;}
