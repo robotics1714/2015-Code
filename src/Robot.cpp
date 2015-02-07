@@ -76,6 +76,8 @@ private:
 		spatulaUp = false;
 		spatulaMoveButtonPressed = false;
 
+		SmartDashboard::PutNumber("Auto Delay", 0.0);
+
 		//leftTwoButtonPressed = false;
 	}
 
@@ -83,9 +85,21 @@ private:
 	{
 		drive->getGyro()->Reset();
 
+		//Get how long to wait at the beginning of autonomous from SmartDashboard
+		double wait = SmartDashboard::GetNumber("Auto Delay");
+
 		AutoInstructions currentInstr;
 
-		//First step, drive backwards towards the step until we are 7.5 inches away
+		//First step, wait for however long the drivers decided before the match
+		currentInstr.flags = 0;//AutoTimer does not have any flags
+		currentInstr.param1 = wait;//How long to wait
+		currentInstr.param2 = 0;//unused
+		currentInstr.param3 = 0;//unused
+		currentInstr.param4 = 0;//unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "First Wait"));
+
+		//Second step, drive backwards towards the step until we are 7.5 inches away
 		currentInstr.flags = DriveTrain::ULTRASONIC;
 		currentInstr.param1 = -1;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
@@ -94,13 +108,13 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
 
-		//Second step, wait 0.5 seconds
+		//Third step, wait 0.5 seconds
 		currentInstr.flags = 0;
 		currentInstr.param1 = 0.5;//Time to wait. the rest of the params are unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
-		//Third step, drive forwards for 1 second
+		//Fourth step, drive forwards for 1 second
 		currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
