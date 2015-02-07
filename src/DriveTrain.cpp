@@ -153,7 +153,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 		{
 			drive->MecanumDrive_Polar(0, 0, 0);
 			//Save the time
-			ofstream file("/home/lvuser/time.csv", ofstream::app);
+			/*ofstream file("/home/lvuser/time.csv", ofstream::app);
 			file<<kP << "," <<autoTimer->Get();
 			if(rightBumpSwitch->Get() == PRESSED)
 			{
@@ -168,7 +168,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 				file<<",Ultrasonic";
 			}
 			file<<endl;
-			file.close();
+			file.close();*/
 			return (int)(false);
 		}
 	}

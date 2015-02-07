@@ -2,6 +2,7 @@
 #define LIFT_H
 
 #include <cmath>
+#include <fstream>
 #include "SmartDashboard/SmartDashboard.h"
 #include "CANTalon.h"
 #include "Victor.h"

@@ -83,6 +83,7 @@ bool Lift::MoveToLevel()
 	float posKP = 0.01;
 	float speedKP = 0.1;
 	float speedKI = 0.01;
+	ofstream file;
 
 	//Check if the lift is with 0.25in of the level
 	if((fabs(posSetPoint - posCurLoc) > 50) && (movingToLevel))
@@ -120,6 +121,18 @@ bool Lift::MoveToLevel()
 			SmartDashboard::PutString("HERE", "HERE");
 			movingToLevel = false;
 		}
+
+		//Save the position P loop information into a file for easy tuning
+		file.open("/home/lvuser/position.csv", ofstream::app);
+		//Set point, controller output, actual value
+		file<<posSetPoint<<","<<speedSetPoint<<","<<posCurLoc<<endl;
+		file.close();
+
+		//Save the speed PI loop information into a file for easy tuning
+		file.open("/home/lvuser/speed.csv", ofstream::app);
+		//Set point, controller output, actual value
+		file<<speedSetPoint<<","<<motorOutput<<","<<curSpeed<<endl;
+		file.close();
 	}
 	else
 	{
