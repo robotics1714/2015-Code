@@ -7,10 +7,10 @@
 
 #include "Rake.h"
 
-Rake::Rake(int talonDeviceNumber, int solenoidPortNumber, int drawInPort, string name) : MORESubsystem(name)
+Rake::Rake(int talonDeviceNumber, int upSolenoidPortNumber, int downSolenoidPortNumber, int drawInPort, string name) : MORESubsystem(name)
 {
 	drawIn = new CANTalon(talonDeviceNumber);
-	actuateSolenoid = new Solenoid(solenoidPortNumber);
+	actuateSolenoid = new DoubleSolenoid(upSolenoidPortNumber, downSolenoidPortNumber);
 	drawInSwitch = new DigitalInput(drawInPort);
 	drawInSpeed = 0;
 	drawingIn = false;
@@ -59,12 +59,12 @@ bool Rake::DrawIn()
 
 void Rake::MoveUp()
 {
-	actuateSolenoid->Set(true);
+	actuateSolenoid->Set(DoubleSolenoid::kForward);
 }
 
 void Rake::MoveDown()
 {
-	actuateSolenoid->Set(false);
+	actuateSolenoid->Set(DoubleSolenoid::kReverse);
 }
 
 /*void Rake::StartMoveForTime(float speed, float time)

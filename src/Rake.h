@@ -12,13 +12,13 @@
 #include "GlobalDefines.h"
 #include "CANTalon.h"
 #include "DigitalInput.h"
-#include "Solenoid.h"
+#include "DoubleSolenoid.h"
 
 class Rake : public MORESubsystem
 {
 private:
 	CANTalon* drawIn;
-	Solenoid* actuateSolenoid;
+	DoubleSolenoid* actuateSolenoid;
 	//Timer* moveTimer;
 	DigitalInput* drawInSwitch;
 	float drawInSpeed;
@@ -36,7 +36,7 @@ public:
 	 *  @param drawInPort The magnetic switch that will sense if the poles are drawn all the way in
 	 *  @param name subsystem name.
 	 */
-	Rake(int talonDeviceNumber, int solenoidPortNumber, int drawInPort, string name);
+	Rake(int talonDeviceNumber, int upSolenoidPortNumber, int downSolenoidPortNumber, int drawInPort, string name);
 	/**
 	 * Deconstructor for the Rake class,
 	 */
@@ -68,6 +68,7 @@ public:
 	 * Actuates the rake up
 	 */
 	void MoveUp();
+
 	/**
 	 * Actuates the rake down
 	 */
