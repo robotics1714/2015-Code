@@ -215,6 +215,27 @@ private:
 			spatulaUp = !spatulaUp;
 		}
 		spatulaMoveButtonPressed = stick->GetRawButton(7);
+		if(stick->GetRawButton(11))
+		{
+			rake->MoveUp();
+		}
+		else if(stick->GetRawButton(12))
+		{
+			rake->MoveDown();
+		}
+
+		if(stick->GetRawButton(9))
+		{
+			rake->Move(0.25);
+		}
+		else if(stick->GetRawButton(10))
+		{
+			rake->Move(-0.25);
+		}
+		else
+		{
+			rake->Move(0);
+		}
 
 		//Second driver controls
 		if(xbox->IsAPressed())
@@ -277,6 +298,7 @@ private:
 		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
 		SmartDashboard::PutNumber("Left Limit", drive->GetLeftLimit()->Get());
 		SmartDashboard::PutNumber("Right limit", drive->GetRightLimit()->Get());
+		SmartDashboard::PutNumber("Draw In Switch", rake->getDrawInSwitch()->Get());
 	}
 
 	void TestPeriodic()
