@@ -1,7 +1,7 @@
 #include "Lift.h"
 
 Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
-		int upperBoundPort, int lowerBoundPort, string name) : MORESubsystem(name)
+		int upperBoundPort, int lowerBoundPort, Spatula* spatula, string name) : MORESubsystem(name)
 {
 	liftMotor = new CANTalon(talonDeviceNumber);
 	liftEncoder = new Encoder(encoAPort, encoBPort);
@@ -12,6 +12,8 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 
 	upperBound = new DigitalInput(upperBoundPort);
 	lowerBound = new DigitalInput (lowerBoundPort);
+
+	spat = spatula;
 
 	movingToLevel = false;
 	integral = 0;
