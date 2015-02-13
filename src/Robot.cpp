@@ -16,8 +16,8 @@
 #define REAR_RIGHT_DRIVE_PORT 3
 
 #define RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER 0
-#define RAKE_UP_ACTUATING_SOLENOID_PORT 0
-#define RAKE_DOWN_ACTUATING_SOLENOID_PORT 1
+#define RAKE_UP_ACTUATING_SOLENOID_PORT 1
+#define RAKE_DOWN_ACTUATING_SOLENOID_PORT 0
 #define RAKE_DRAW_IN_LIMIT_PORT 3
 
 #define LIFT_MOTOR_DEVICE_NUMBER 1
@@ -80,6 +80,9 @@ private:
 		SmartDashboard::PutNumber("Auto Delay", 0.0);
 
 		//leftTwoButtonPressed = false;
+
+		//Move the rake up
+		rake->MoveUp();
 	}
 
 	void AutonomousInit()
@@ -102,27 +105,48 @@ private:
 
 		//Second step, drive backwards towards the step until we are 7.5 inches away
 		currentInstr.flags = DriveTrain::ULTRASONIC;
-		currentInstr.param1 = -1;//Go quarter speed in reverse
+		currentInstr.param1 = -0.75;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 7.0;//7 second safety timer
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
 
-		//Third step, wait 0.5 seconds
+		//Wait a bit
 		currentInstr.flags = 0;
-		currentInstr.param1 = 0.5;//Time to wait. the rest of the params are unused
+		currentInstr.param1 = 1;//Wait
+		currentInstr.param2 = 0;//unused
+		currentInstr.param3 = 0;//unused
+		currentInstr.param4 = 0;//unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+
+		//Drop the rake
+		currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
+
+		//Third step, wait 0.5 seconds and drop the intake
+		currentInstr.flags = 0;
+		currentInstr.param1 = 1;//Time to wait. the rest of the params are unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
 		//Fourth step, drive forwards for 1 second
 		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.5;//Go half speed
+		currentInstr.param1 = 0.3;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 0.5;//Go for 1 second
+		currentInstr.param4 = 1.0;//Go for 1 second
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
+
+		//Bring the rake up
+		currentInstr.flags = Rake::AUTO_MOVE_UP;
+		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
 	}
 
 	void AutonomousPeriodic()
@@ -299,6 +323,7 @@ private:
 		SmartDashboard::PutNumber("Left Limit", drive->GetLeftLimit()->Get());
 		SmartDashboard::PutNumber("Right limit", drive->GetRightLimit()->Get());
 		SmartDashboard::PutNumber("Draw In Switch", rake->getDrawInSwitch()->Get());
+		SmartDashboard::PutNumber("AI 1", lift->GetPot()->GetAverageValue());
 	}
 
 	void TestPeriodic()

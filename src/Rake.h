@@ -79,6 +79,8 @@ public:
 	 */
 	DigitalInput* getDrawInSwitch(){return drawInSwitch;}
 
+	DoubleSolenoid* GetSolenoid(){return actuateSolenoid;}
+
 	/**
 	 * Stops the Rake Motor
 	 */

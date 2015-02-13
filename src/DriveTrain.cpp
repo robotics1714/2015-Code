@@ -58,7 +58,7 @@ void DriveTrain::Drive(float x, float y, float rot)
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
 	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, gyro->GetAngle()*-1/*0.0*/);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rotation, (gyro->GetAngle()*-1)-180/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 
 	SmartDashboard::PutNumber("Ultrasonic:", sonic->GetRangeInches());
