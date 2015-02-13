@@ -211,41 +211,45 @@ private:
 		}*/
 
 		//Main driver controls
-		if(stick->GetRawButton(3))
+		//Move the spatula
+		if(stick->GetRawButton(5))
 		{
-			//Aquire a tote/container
-			lift->StartAcquire();
+			spatula->Rotate(CURVE_IN);
 		}
-		if(stick->GetRawButton(4))
+		else if(stick->GetRawButton(3))
 		{
-			//Release the stack
+			spatula->Rotate(CURVE_OUT);
 		}
-		if(stick->GetRawButton(7) && !spatulaMoveButtonPressed)
+		else
 		{
-			//Move the spatula up or down depending on where it is
-			if(spatulaUp)
-			{
-				//Move down
-				spatula->StartMoveDown();
-			}
-			else
-			{
-				//Move up
-				spatula->StartMoveUp();
-			}
-			//Toggle the spatulaUp variable because it has changed states
-			spatulaUp = !spatulaUp;
+			spatula->Rotate(0);
 		}
-		spatulaMoveButtonPressed = stick->GetRawButton(7);
+
+		//Raise the lift up/down
+		if(stick->GetRawButton(6))
+		{
+			lift->Move(Lift::FULL_SPEED_UP/4);
+		}
+		else if(stick->GetRawButton(4))
+		{
+			lift->Move(Lift::FULL_SPEED_DOWN/4);
+		}
+		else
+		{
+			lift->Move(0);
+		}
+
+		//Actuate the rake up/down
 		if(stick->GetRawButton(11))
-		{
-			rake->MoveUp();
-		}
-		else if(stick->GetRawButton(12))
 		{
 			rake->MoveDown();
 		}
+		else if(stick->GetRawButton(12))
+		{
+			rake->MoveUp();
+		}
 
+		//Move the Rake Extensions
 		if(stick->GetRawButton(9))
 		{
 			rake->Move(0.25);
