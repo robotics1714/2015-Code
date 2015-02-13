@@ -42,7 +42,6 @@ class Robot: public IterativeRobot
 private:
 	LiveWindow *lw;
 	Joystick* stick;
-	XboxController* xbox;
 	DriveTrain* drive;
 	Spatula* spatula;
 	Lift* lift;
@@ -60,7 +59,6 @@ private:
 		lw = LiveWindow::GetInstance();
 
 		stick = new Joystick(0);
-		xbox = new XboxController(new Joystick(1));
 
 		drive = new DriveTrain(FRONT_LEFT_DRIVE_PORT, REAR_LEFT_DRIVE_PORT,
 				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
@@ -259,52 +257,6 @@ private:
 		else
 		{
 			rake->Move(0);
-		}
-
-		//Second driver controls
-		if(xbox->IsAPressed())
-		{
-			//Go to level 0
-			lift->StartMoveToLevel(0);
-		}
-		else if((xbox->IsXPressed()) && (xbox->GetLeftTriggerAxis() < 0.5))
-		{
-			//Go to level 1
-			lift->StartMoveToLevel(1);
-		}
-		else if((xbox->IsYPressed()) && (xbox->GetLeftTriggerAxis() < 0.5))
-		{
-			//Go to level 2
-			lift->StartMoveToLevel(2);
-		}
-		else if((xbox->IsBPressed()) && (xbox->GetLeftTriggerAxis() < 0.5))
-		{
-			//Go to level 3
-			lift->StartMoveToLevel(3);
-		}
-		else if((xbox->IsXPressed()) && (xbox->GetLeftTriggerAxis() > 0.5))
-		{
-			//Go to level 4
-			lift->StartMoveToLevel(4);
-		}
-		else if((xbox->IsYPressed()) && (xbox->GetLeftTriggerAxis() > 0.5))
-		{
-			//Go to level 5
-			lift->StartMoveToLevel(5);
-		}
-		else if((xbox->IsBPressed()) && (xbox->GetLeftTriggerAxis() > 0.5))
-		{
-			//Go to level 6
-			lift->StartMoveToLevel(6);
-		}
-		if((xbox->GetLeftTriggerAxis() > 0.5) && (fabs(xbox->GetRightYAxis()) > 0.15))
-		{
-			//Tell the lift to stop if it is doing stuff and then have it move according to the right y axis
-			if((lift->GetMovingToLevel()) || (lift->Acquire() != IDLE_STATE))
-			{
-				lift->Stop();
-			}
-			lift->Move(xbox->GetRightYAxis());
 		}
 
 		drive->Drive(x, y, twist);
