@@ -86,7 +86,6 @@ public:
 	 */
 	void Stop();
 
-
 	///MORESubsystem Auto Instructions
 	void SetUpAuto(AutoInstructions instructions) override;
 	int Auto(AutoInstructions instructions) override;

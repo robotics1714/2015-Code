@@ -26,7 +26,7 @@ Rake::~Rake()
 bool Rake::Move(float speed)
 {
 	//The draw in switch is activated, stop moving the rake in
-	if((drawInSwitch->Get() == 1))//The proximity switch is opposite from limit switches, so when it is present, the sensor returns 1
+	if((drawInSwitch->Get() == 1) && (speed < 0))//The proximity switch is opposite from limit switches, so when it is present, the sensor returns 1
 	{
 		drawIn->Set(0);
 		return false;

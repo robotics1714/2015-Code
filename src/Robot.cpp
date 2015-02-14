@@ -103,7 +103,7 @@ private:
 
 		//Second step, drive backwards towards the step until we are 7.5 inches away
 		currentInstr.flags = DriveTrain::ULTRASONIC;
-		currentInstr.param1 = -0.75;//Go quarter speed in reverse
+		currentInstr.param1 = -1.0;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 7.0;//7 second safety timer
@@ -133,10 +133,10 @@ private:
 
 		//Fourth step, drive forwards for 1 second
 		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.3;//Go half speed
+		currentInstr.param1 = 1.0;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 1.0;//Go for 1 second
+		currentInstr.param4 = 0.5;//Go for 1 second
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
 
@@ -145,6 +145,13 @@ private:
 		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
+
+		//Bring in the extensions
+		/*currentInstr.flags = Rake::AUTO_DRAW_IN;
+		currentInstr.param1 = -1;//Speed to draw in
+		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));*/
 	}
 
 	void AutonomousPeriodic()
@@ -256,13 +263,13 @@ private:
 		}
 		else if(stick->GetRawButton(10))
 		{
-			rake->Move(-0.25);
+			rake->Move(-1);
 		}
 		else if(stick->GetRawButton(8))
 		{
-			rake->StartDrawIn(-0.25);
+			rake->StartDrawIn(-1);
 		}
-		else
+		else if(!rake->DrawIn())
 		{
 			rake->Move(0);
 		}
