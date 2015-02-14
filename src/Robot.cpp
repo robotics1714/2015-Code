@@ -227,7 +227,7 @@ private:
 		{
 			spatula->Rotate(CURVE_OUT);
 		}
-		else
+		else if((!spatula->MoveUp()) && (!spatula->MoveDown()))
 		{
 			spatula->Rotate(0);
 		}
@@ -241,7 +241,7 @@ private:
 		{
 			lift->Move(Lift::FULL_SPEED_DOWN/4);
 		}
-		else
+		else if(!lift->GetMovingToLevel())
 		{
 			lift->Move(0);
 		}
