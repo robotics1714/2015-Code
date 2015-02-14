@@ -258,6 +258,10 @@ private:
 		{
 			rake->Move(-0.25);
 		}
+		else if(stick->GetRawButton(8))
+		{
+			rake->StartDrawIn(-0.25);
+		}
 		else
 		{
 			rake->Move(0);
