@@ -135,13 +135,13 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
-		//Fourth step, drive forwards at half speed
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.5;//Go half speed
+		//Fourth step, drive forwards away from the step using the ultrasonic sensor
+		currentInstr.flags = DriveTrain::ULTRASONIC;
+		currentInstr.param1 = 1.0;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 0.5;//Go for 1 second
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
+		currentInstr.param4 = 2;//Go for 1 second
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
 		//fifth step drive forward full speed
 		currentInstr.flags = DriveTrain::TIME;
@@ -150,7 +150,7 @@ private:
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 2.0;//Go for this long
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));
 
 		//Bring the rake up
 		currentInstr.flags = Rake::AUTO_MOVE_UP;

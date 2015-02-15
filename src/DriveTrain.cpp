@@ -138,14 +138,16 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	//Drive until the unltrasonic sensor says we are within 5 inches or either of the limit switches are pressed
 	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
 	{
-		double setPoint = 5.0;
+		double approachSetPoint = 5.0;
+		double departureSetPoint = 12;
 		double curLoc = sonic->GetRangeInches();
 		double error, speed;
-		double kP = 0.0156;
-		if((curLoc > setPoint) && (leftBumpSwitch->Get() == RELEASED) &&
+		double kP = 0.016;
+		//If we are driving back
+		if((magnitude < 0) && (curLoc > approachSetPoint) && (leftBumpSwitch->Get() == RELEASED) &&
 				(rightBumpSwitch->Get() == RELEASED) && (autoTimer->Get() < time))
 		{
-			error = curLoc - setPoint;
+			error = curLoc - approachSetPoint;
 			speed = error * kP * magnitude;
 			if(fabs(speed) > fabs(magnitude))
 			{
@@ -154,6 +156,18 @@ int DriveTrain::Auto(AutoInstructions instructions)
 			drive->MecanumDrive_Polar(speed, dir, turnSpeed);
 			SmartDashboard::PutNumber("Auto Speed:", speed);
 			return (int)(true);
+		}
+		//If we are going forward
+		else if((magnitude > 0) && (curLoc < departureSetPoint) && (autoTimer->Get() < time))
+		{
+			error = approachSetPoint;
+			speed = error * kP * magnitude;
+			if(fabs(speed) > fabs(magnitude))
+			{
+				speed = magnitude;
+			}
+			drive->MecanumDrive_Polar(speed, dir, turnSpeed);
+			SmartDashboard::PutNumber("Auto Speed:", speed);
 		}
 		else
 		{
