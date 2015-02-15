@@ -320,6 +320,12 @@ private:
 			lift->StartMoveToLevel(5);
 		}
 
+		//Bring in the extensions
+		if(stick->GetRawButton(3))
+		{
+			rake->StartDrawIn(-1);
+		}
+
 		drive->Drive(x, y, twist);
 
 		//These functions are for state machines and need to be called every call of the function
