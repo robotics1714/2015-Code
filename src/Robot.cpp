@@ -131,16 +131,24 @@ private:
 
 		//Third step, wait 0.5 seconds and drop the intake
 		currentInstr.flags = 0;
-		currentInstr.param1 = 1;//Time to wait. the rest of the params are unused
+		currentInstr.param1 = 2;//Time to wait. the rest of the params are unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
-		//Fourth step, drive forwards for 1 second
+		//Fourth step, drive forwards at half speed
 		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 1.0;//Go half speed
+		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 0.5;//Go for 1 second
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
+
+		//fifth step drive forward full speed
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0.5;//Go half speed
+		currentInstr.param2 = 0.0;//Go straight
+		currentInstr.param3 = 0.0;//No rotation
+		currentInstr.param4 = 2.0;//Go for this long
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back"));
 
