@@ -219,35 +219,52 @@ private:
 
 		//Main driver controls
 		//Move the spatula
-		if(stick->GetRawButton(5))
+		if(stick->GetRawButton(5) && !spatulaMoveButtonPressed)
 		{
-			spatula->Rotate(CURVE_IN);
+			//If the spatula is up, move down
+			if(spatulaUp)
+			{
+				spatula->StartMoveDown();
+			}
+			//If the spatula is down, move it up
+			else
+			{
+				spatula->StartMoveUp();
+			}
+			//Toggle the spatula
+			spatulaUp = !spatulaUp;
 		}
-		else if(stick->GetRawButton(3))
+		spatulaMoveButtonPressed = stick->GetRawButton(5);
+
+		/*else if(stick->GetRawButton(3))
 		{
-			spatula->Rotate(CURVE_OUT);
+			spatula->StartMoveDown();
 		}
 		else if((!spatula->MoveUp()) && (!spatula->MoveDown()))
 		{
 			spatula->Rotate(0);
-		}
+		}*/
 
 		//Raise the lift up/down
 		if(stick->GetRawButton(6))
 		{
-			lift->Move(Lift::FULL_SPEED_UP/4);
+			//Up
+			lift->Move(-1.0);
+			lift->SetManuallyMoving(true);
 		}
 		else if(stick->GetRawButton(4))
 		{
-			lift->Move(Lift::FULL_SPEED_DOWN/4);
+			//Down
+			lift->Move(0.75);
+			lift->SetManuallyMoving(true);
 		}
-		else if(!lift->GetMovingToLevel())
+		else
 		{
 			lift->Move(0);
 		}
 
 		//Actuate the rake up/down
-		if(stick->GetRawButton(11))
+		/*if(stick->GetRawButton(11))
 		{
 			rake->MoveDown();
 		}
@@ -272,6 +289,31 @@ private:
 		else if(!rake->DrawIn())
 		{
 			rake->Move(0);
+		}*/
+
+		if(stick->GetRawButton(12))
+		{
+			lift->StartMoveToLevel(0);
+		}
+		else if(stick->GetRawButton(11))
+		{
+			lift->StartMoveToLevel(1);
+		}
+		else if(stick->GetRawButton(10))
+		{
+			lift->StartMoveToLevel(2);
+		}
+		else if(stick->GetRawButton(9))
+		{
+			lift->StartMoveToLevel(3);
+		}
+		else if(stick->GetRawButton(8))
+		{
+			lift->StartMoveToLevel(4);
+		}
+		else if(stick->GetRawButton(7))
+		{
+			lift->StartMoveToLevel(5);
 		}
 
 		drive->Drive(x, y, twist);
@@ -285,12 +327,19 @@ private:
 		lift->Acquire();
 
 		//Print out information for the driver/debugger
-		SmartDashboard::PutNumber("Gyro:", drive->getGyro()->GetAngle());
-		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
-		SmartDashboard::PutNumber("Left Limit", drive->GetLeftLimit()->Get());
-		SmartDashboard::PutNumber("Right limit", drive->GetRightLimit()->Get());
-		SmartDashboard::PutNumber("Draw In Switch", rake->getDrawInSwitch()->Get());
-		SmartDashboard::PutNumber("AI 1", lift->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Lift Upper Bound", lift->getUpperBound()->Get());
+		SmartDashboard::PutNumber("Lift Lower Bound", lift->getLowerBound()->Get());
+		SmartDashboard::PutNumber("Lift Velocity", lift->GetEnco()->GetRate());
+		SmartDashboard::PutNumber("Lift Enco Pos", lift->GetEnco()->GetDistance());
+		SmartDashboard::PutNumber("Lift Enco Pulses", lift->GetEnco()->GetRaw());
+		SmartDashboard::PutNumber("Lift Position", lift->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Spat Position", spatula->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+	}
+
+	void DisabledPeriodic()
+	{
+		drive->ResetAutoCorrect();
 	}
 
 	void TestPeriodic()

@@ -8,12 +8,12 @@
 #ifndef SPATULA_H
 #define SPATULA_H
 
-#define SPATULA_UP 400
-#define SPATULA_DOWN 1200
+#define SPATULA_CLOSED 774
+#define SPATULA_OPEN 1300
 
 
-#define CURVE_IN -0.5
-#define CURVE_OUT  0.5
+#define CURVE_IN -1.0
+#define CURVE_OUT  1.0
 
 
 #include "CANTalon.h"

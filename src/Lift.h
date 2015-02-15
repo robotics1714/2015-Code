@@ -13,11 +13,11 @@
 #include "GlobalDefines.h"
 #include "Spatula.h"
 
-#define DISTANCE_PER_PULSE 0.01 //TODO calculate this, it should be (distance the lift travels)/(encoder pulses to travel entire lift)
+#define DISTANCE_PER_PULSE 58.75/170757.0 //This is the displacement of the lift divided by the encoder counts it takes to get there
 #define HEIGHT_OF_TOTE 400//Pot values that relate to the height of the platform/totes
 #define HEIGHT_OF_SCORING_PLAT 150
 
-#define SPEED_LIMIT 2//3 //the max speed the MoveToLevel functions can make the lift go in in/s
+#define SPEED_LIMIT 18//3 //the max speed the MoveToLevel functions can make the lift go in in/s
 
 class Lift : public MORESubsystem
 {
@@ -31,8 +31,9 @@ private:
 	//bool movingUpLevel;
 	//bool movingDownLevel;
 	bool movingToLevel;
+	bool manuallyMoving;
 	int currentLevel;
-	int levelPotValues[7];
+	int levelPotValues[6];
 	float integral;
 	int acquireState;
 public:
@@ -93,6 +94,8 @@ public:
 	 * @see MoveToLevel()
 	 */
 	void StartMoveToLevel(int level);
+
+	void SetManuallyMoving(bool moving){manuallyMoving = moving;}
 
 	/**
 	 * Functions that will go through the steps of acquiring a tote/container

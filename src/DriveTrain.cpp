@@ -69,6 +69,12 @@ void DriveTrain::TankDrive(float left, float right)
 	drive->TankDrive(left, right);
 }
 
+void DriveTrain::ResetAutoCorrect()
+{
+	gyro->Reset();
+	currentHeading = gyro->GetAngle();
+}
+
 //param1: magnitude [-1, 1]
 //param2: direction (degrees)
 //param3: where to rotate to (degrees)

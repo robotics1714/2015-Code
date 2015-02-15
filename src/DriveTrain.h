@@ -77,6 +77,8 @@ public:
 	void TankDrive(float left, float right);
 
 
+	void ResetAutoCorrect();
+
 	//Accessor methods
 	/**
 	 * getGyro returns the value of the gyro at an instance.

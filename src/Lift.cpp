@@ -18,16 +18,17 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 	movingToLevel = false;
 	integral = 0;
 
+	manuallyMoving = false;
+
 	acquireState = IDLE_STATE;
 
 	currentLevel = 0;
-	levelPotValues[0] = 0;
-	levelPotValues[1] = HEIGHT_OF_SCORING_PLAT + (HEIGHT_OF_TOTE) + 3;
-	levelPotValues[2] = HEIGHT_OF_SCORING_PLAT + (2*HEIGHT_OF_TOTE) + 3;
-	levelPotValues[3] = HEIGHT_OF_SCORING_PLAT + (3*HEIGHT_OF_TOTE) + 3;
-	levelPotValues[4] = HEIGHT_OF_SCORING_PLAT + (4*HEIGHT_OF_TOTE) + 3;
-	levelPotValues[5] = HEIGHT_OF_SCORING_PLAT + (5*HEIGHT_OF_TOTE) + 3;
-	levelPotValues[6] = HEIGHT_OF_SCORING_PLAT + (6*HEIGHT_OF_TOTE) + 3;
+	levelPotValues[0] = 860;
+	levelPotValues[1] = 2000;
+	levelPotValues[2] = 2500;
+	levelPotValues[3] = 3050;
+	levelPotValues[4] = 3520;
+	levelPotValues[5] = 3550;
 }
 
 Lift::~Lift()
@@ -42,7 +43,8 @@ Lift::~Lift()
 bool Lift::Move(float speed)
 {
 	//Make sure we stop when we hit a limit switch
-	if( ((speed < 0) && (upperBound->Get() == RELEASED))  || ((speed > 0) && lowerBound->Get() == RELEASED) )
+	if( ((speed < 0) && (upperBound->Get() == RELEASED) && (liftPot->GetAverageValue() < levelPotValues[5]))
+			|| ((speed > 0) && lowerBound->Get() == RELEASED) )
 	{
 		liftMotor->Set(speed);
 		return true;
@@ -59,8 +61,8 @@ void Lift::StartMoveToLevel(int level)
 	if(!movingToLevel)
 	{
 		//Put the level between 0 and 6
-		if(level > 6)
-			currentLevel = 6;
+		if(level > 5)
+			currentLevel = 5;
 		else if(level < 0)
 			currentLevel = 0;
 		else
@@ -82,9 +84,9 @@ bool Lift::MoveToLevel()
 	float speedError;
 	float motorOutput;
 	//TODO tune this
-	float posKP = 0.01;
-	float speedKP = 0.1;
-	float speedKI = 0.01;
+	float posKP = 0.02;
+	float speedKP = 0.07;
+	float speedKI = 0.0001;
 	ofstream file;
 
 	//Check if the lift is with 0.25in of the level
@@ -124,24 +126,30 @@ bool Lift::MoveToLevel()
 			movingToLevel = false;
 		}
 
+		SmartDashboard::PutNumber("Pos Error", posError);
+		SmartDashboard::PutNumber("Speed Error", speedError);
+
 		//Save the position P loop information into a file for easy tuning
-		file.open("/home/lvuser/position.csv", ofstream::app);
+		file.open("/home/lvuser/position1.csv", ofstream::app);
 		//Set point, controller output, actual value
 		file<<posSetPoint<<","<<speedSetPoint<<","<<posCurLoc<<endl;
 		file.close();
 
 		//Save the speed PI loop information into a file for easy tuning
-		file.open("/home/lvuser/speed.csv", ofstream::app);
+		file.open("/home/lvuser/speed1.csv", ofstream::app);
 		//Set point, controller output, actual value
 		file<<speedSetPoint<<","<<motorOutput<<","<<curSpeed<<endl;
 		file.close();
 	}
-	else
+	else if(!manuallyMoving)
 	{
 		//We done
 		Move(0);
 		movingToLevel = false;
 	}
+
+	//Reset manuallyMoving for the next loop
+	manuallyMoving = false;
 
 	SmartDashboard::PutNumber("speedSetPoint", speedSetPoint);
 	SmartDashboard::PutNumber("motorOutput", motorOutput);
