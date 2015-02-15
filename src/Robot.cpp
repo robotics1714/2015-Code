@@ -49,6 +49,8 @@ private:
 
 	bool spatulaUp;
 	bool spatulaMoveButtonPressed;//Used to make sure the spatulaUp variable is toggled only once per button press
+	bool rakeUp;
+	bool rakeMoveButtonPressed;
 	//bool leftTwoButtonPressed;
 
 	//For autonomous
@@ -74,6 +76,8 @@ private:
 
 		spatulaUp = false;
 		spatulaMoveButtonPressed = false;
+		rakeUp = false;
+		rakeMoveButtonPressed = false;
 
 		SmartDashboard::PutNumber("Auto Delay", 0.0);
 
@@ -236,6 +240,24 @@ private:
 		}
 		spatulaMoveButtonPressed = stick->GetRawButton(5);
 
+		//Actuate the take
+		if(stick->GetRawButton(2) && !rakeMoveButtonPressed)
+		{
+			//If the rake is up, move it down
+			if(rakeUp)
+			{
+				rake->MoveDown();
+			}
+			//If the rake is down, move it up
+			else
+			{
+				rake->MoveUp();
+			}
+			//Toggle spatula down
+			rakeUp = !rakeUp;
+		}
+		rakeMoveButtonPressed = stick->GetRawButton(2);
+
 		/*else if(stick->GetRawButton(3))
 		{
 			spatula->StartMoveDown();
@@ -263,34 +285,8 @@ private:
 			lift->Move(0);
 		}
 
-		//Actuate the rake up/down
-		/*if(stick->GetRawButton(11))
-		{
-			rake->MoveDown();
-		}
-		else if(stick->GetRawButton(12))
-		{
-			rake->MoveUp();
-		}
 
-		//Move the Rake Extensions
-		if(stick->GetRawButton(9))
-		{
-			rake->Move(0.25);
-		}
-		else if(stick->GetRawButton(10))
-		{
-			rake->Move(-1);
-		}
-		else if(stick->GetRawButton(8))
-		{
-			rake->StartDrawIn(-1);
-		}
-		else if(!rake->DrawIn())
-		{
-			rake->Move(0);
-		}*/
-
+		//Controls to move the lift to each level
 		if(stick->GetRawButton(12))
 		{
 			lift->StartMoveToLevel(0);
