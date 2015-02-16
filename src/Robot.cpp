@@ -51,6 +51,7 @@ private:
 	bool spatulaMoveButtonPressed;//Used to make sure the spatulaUp variable is toggled only once per button press
 	bool rakeUp;
 	bool rakeMoveButtonPressed;
+	bool moveToLevelButtonPressed;
 	//bool leftTwoButtonPressed;
 
 	//For autonomous
@@ -78,6 +79,7 @@ private:
 		spatulaMoveButtonPressed = false;
 		rakeUp = false;
 		rakeMoveButtonPressed = false;
+		moveToLevelButtonPressed = false;
 
 		SmartDashboard::PutNumber("Auto Delay", 0.0);
 
@@ -297,30 +299,39 @@ private:
 
 
 		//Controls to move the lift to each level
-		if(stick->GetRawButton(12))
+		if(stick->GetRawButton(12) && !moveToLevelButtonPressed)
 		{
+			lift->Stop();
 			lift->StartMoveToLevel(0);
 		}
-		else if(stick->GetRawButton(11))
+		else if(stick->GetRawButton(11) && !moveToLevelButtonPressed)
 		{
+			lift->Stop();
 			lift->StartMoveToLevel(1);
 		}
-		else if(stick->GetRawButton(10))
+		else if(stick->GetRawButton(10) && !moveToLevelButtonPressed)
 		{
+			lift->Stop();
 			lift->StartMoveToLevel(2);
 		}
-		else if(stick->GetRawButton(9))
+		else if(stick->GetRawButton(9) && !moveToLevelButtonPressed)
 		{
+			lift->Stop();
 			lift->StartMoveToLevel(3);
 		}
-		else if(stick->GetRawButton(8))
+		else if(stick->GetRawButton(8) && !moveToLevelButtonPressed)
 		{
+			lift->Stop();
 			lift->StartMoveToLevel(4);
 		}
-		else if(stick->GetRawButton(7))
+		else if(stick->GetRawButton(7) && !moveToLevelButtonPressed)
 		{
+			lift->Stop();
 			lift->StartMoveToLevel(5);
 		}
+		//Used to make sure telling the lift to move to a level happens once per button press
+		moveToLevelButtonPressed = (stick->GetRawButton(12) || stick->GetRawButton(11) ||
+				stick->GetRawButton(10) || stick->GetRawButton(9) || stick->GetRawButton(8) || stick->GetRawButton(7));
 
 		//Bring in the extensions
 		if(stick->GetRawButton(3))
