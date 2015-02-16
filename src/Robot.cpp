@@ -233,6 +233,8 @@ private:
 		//Move the spatula
 		if(stick->GetRawButton(5) && !spatulaMoveButtonPressed)
 		{
+			//If the spatula is moving it, stop that process
+			spatula->Stop();
 			//If the spatula is up, move down
 			if(spatulaUp)
 			{
@@ -248,7 +250,7 @@ private:
 		}
 		spatulaMoveButtonPressed = stick->GetRawButton(5);
 
-		//Actuate the take
+		//Actuate the rake
 		if(stick->GetRawButton(2) && !rakeMoveButtonPressed)
 		{
 			//If the rake is up, move it down
