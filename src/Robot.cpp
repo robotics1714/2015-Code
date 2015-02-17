@@ -152,7 +152,7 @@ private:
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 1.0;//Go for this long
+		currentInstr.param4 = 1.5;//Go for this long
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));
 

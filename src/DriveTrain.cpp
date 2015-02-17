@@ -139,7 +139,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
 	{
 		double approachSetPoint = 5.0;
-		double departureSetPoint = 24;
+		double departureSetPoint = 48;
 		double curLoc = sonic->GetRangeInches();
 		double error, speed;
 		double kP = 0.016;
@@ -160,12 +160,17 @@ int DriveTrain::Auto(AutoInstructions instructions)
 		//If we are going forward
 		else if((magnitude > 0) && (curLoc < departureSetPoint) && (autoTimer->Get() < time))
 		{
-			kP = 0.011;
-			error = departureSetPoint - curLoc;
+			kP = 0.018;
+			error = curLoc;
 			speed = error * kP * magnitude;
+			//Set a floor and ceiling for the speed
 			if(fabs(speed) > fabs(magnitude))
 			{
 				speed = magnitude;
+			}
+			if(speed < 0.25)
+			{
+				speed = 0.25;
 			}
 			drive->MecanumDrive_Polar(speed, dir, turnSpeed);
 			SmartDashboard::PutNumber("Auto Speed:", speed);
