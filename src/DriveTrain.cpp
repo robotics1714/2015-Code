@@ -160,7 +160,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 		//If we are going forward
 		else if((magnitude > 0) && (curLoc < departureSetPoint) && (autoTimer->Get() < time))
 		{
-			error = approachSetPoint;
+			error = departureSetPoint - curLoc;
 			speed = error * kP * magnitude;
 			if(fabs(speed) > fabs(magnitude))
 			{
