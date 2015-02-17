@@ -139,7 +139,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	if((instructions.flags & ULTRASONIC) == ULTRASONIC)
 	{
 		double approachSetPoint = 5.0;
-		double departureSetPoint = 12;
+		double departureSetPoint = 24;
 		double curLoc = sonic->GetRangeInches();
 		double error, speed;
 		double kP = 0.016;
@@ -160,6 +160,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 		//If we are going forward
 		else if((magnitude > 0) && (curLoc < departureSetPoint) && (autoTimer->Get() < time))
 		{
+			kP = 0.011;
 			error = departureSetPoint - curLoc;
 			speed = error * kP * magnitude;
 			if(fabs(speed) > fabs(magnitude))

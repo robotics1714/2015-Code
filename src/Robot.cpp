@@ -42,6 +42,7 @@ class Robot: public IterativeRobot
 private:
 	LiveWindow *lw;
 	Joystick* stick;
+	XboxController* xbox;
 	DriveTrain* drive;
 	Spatula* spatula;
 	Lift* lift;
@@ -62,6 +63,7 @@ private:
 		lw = LiveWindow::GetInstance();
 
 		stick = new Joystick(0);
+		xbox = new XboxController(new Joystick(1));
 
 		drive = new DriveTrain(FRONT_LEFT_DRIVE_PORT, REAR_LEFT_DRIVE_PORT,
 				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
@@ -142,7 +144,7 @@ private:
 		currentInstr.param1 = 1.0;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 2;//Go for 1 second
+		currentInstr.param4 = 5;//Go for 1 second
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
 		//fifth step drive forward full speed
@@ -150,7 +152,7 @@ private:
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 2.0;//Go for this long
+		currentInstr.param4 = 1.0;//Go for this long
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));
 
@@ -161,11 +163,20 @@ private:
 		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
 
 		//Bring in the extensions
-		/*currentInstr.flags = Rake::AUTO_DRAW_IN;
+		currentInstr.flags = Rake::AUTO_DRAW_IN;
 		currentInstr.param1 = -1;//Speed to draw in
 		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));*/
+		autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));
+
+		//Straighten out the robot
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0;//Speed
+		currentInstr.param2 = 0;//Direction
+		currentInstr.param3 = 0;//Rotation
+		currentInstr.param4 = 0.75;//Time
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));
 	}
 
 	void AutonomousPeriodic()
@@ -337,6 +348,15 @@ private:
 		if(stick->GetRawButton(3))
 		{
 			rake->StartDrawIn(-1);
+		}
+		//Roll out the spool
+		if(xbox->IsAPressed())
+		{
+			rake->Move(0.25);
+		}
+		else if(!rake->DrawIn())
+		{
+			rake->Move(0);
 		}
 
 		drive->Drive(x, y, twist);
