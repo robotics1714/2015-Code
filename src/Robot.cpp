@@ -79,7 +79,7 @@ private:
 
 		spatulaUp = false;
 		spatulaMoveButtonPressed = false;
-		rakeUp = false;
+		rakeUp = true;
 		rakeMoveButtonPressed = false;
 		moveToLevelButtonPressed = false;
 
@@ -135,7 +135,7 @@ private:
 
 		//Third step, wait 0.5 seconds and drop the intake
 		currentInstr.flags = 0;
-		currentInstr.param1 = 2;//Time to wait. the rest of the params are unused
+		currentInstr.param1 = 1.5;//Time to wait. the rest of the params are unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
@@ -144,17 +144,17 @@ private:
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 0.5;//Go for 1 second
+		currentInstr.param4 = 2.5;//Go for 1 second
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
 		//fifth step drive forward full speed
-		currentInstr.flags = DriveTrain::TIME;
+		/*currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.7;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 1.75;//Go for this long
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));*/
 
 		//Bring the rake up
 		currentInstr.flags = Rake::AUTO_MOVE_UP;
