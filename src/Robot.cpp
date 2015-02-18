@@ -140,19 +140,19 @@ private:
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
 		//Fourth step, drive forwards away from the step using the ultrasonic sensor
-		currentInstr.flags = DriveTrain::ULTRASONIC;
-		currentInstr.param1 = 1.0;//Go half speed
-		currentInstr.param2 = 0.0;//Go straight
-		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 5;//Go for 1 second
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
-
-		//fifth step drive forward full speed
 		currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 1.5;//Go for this long
+		currentInstr.param4 = 0.5;//Go for 1 second
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
+
+		//fifth step drive forward full speed
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0.7;//Go half speed
+		currentInstr.param2 = 0.0;//Go straight
+		currentInstr.param3 = 0.0;//No rotation
+		currentInstr.param4 = 1.75;//Go for this long
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));
 
@@ -163,7 +163,7 @@ private:
 		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
 
 		//Bring in the extensions
-		currentInstr.flags = Rake::AUTO_DRAW_IN;
+		/*currentInstr.flags = Rake::AUTO_DRAW_IN;
 		currentInstr.param1 = -1;//Speed to draw in
 		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
 		//Add the step to the queue
@@ -176,7 +176,7 @@ private:
 		currentInstr.param3 = 0;//Rotation
 		currentInstr.param4 = 0.75;//Time
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));*/
 	}
 
 	void AutonomousPeriodic()

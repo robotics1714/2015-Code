@@ -160,7 +160,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 		//If we are going forward
 		else if((magnitude > 0) && (curLoc < departureSetPoint) && (autoTimer->Get() < time))
 		{
-			kP = 0.018;
+			kP = 0.008;
 			error = curLoc;
 			speed = error * kP * magnitude;
 			//Set a floor and ceiling for the speed
@@ -168,9 +168,9 @@ int DriveTrain::Auto(AutoInstructions instructions)
 			{
 				speed = magnitude;
 			}
-			if(speed < 0.25)
+			if(speed < 0.15)
 			{
-				speed = 0.25;
+				speed = 0.15;
 			}
 			drive->MecanumDrive_Polar(speed, dir, turnSpeed);
 			SmartDashboard::PutNumber("Auto Speed:", speed);
