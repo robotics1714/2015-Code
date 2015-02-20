@@ -2,6 +2,7 @@
 #include <queue>
 #include <cmath>
 #include <fstream>
+#include <iostream>
 #include "WPILib.h"
 #include "AutoStep.h"
 #include "AutoTimer.h"
@@ -84,6 +85,7 @@ private:
 		}
 		else
 		{
+			cout<<"Opened"<<endl;
 			//If it opened correctly, read the file
 			file>>robotNumber;
 		}
@@ -110,6 +112,7 @@ private:
 
 		//Print which robot we're using
 		SmartDashboard::PutString("Robot: ", (robotNumber == "2")?"Practice Bot":"Competition Bot");
+		cout<<robotNumber;
 	}
 
 	void AutonomousInit()

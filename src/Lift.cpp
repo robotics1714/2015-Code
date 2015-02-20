@@ -145,13 +145,13 @@ bool Lift::MoveToLevel()
 		SmartDashboard::PutNumber("Speed Error", speedError);
 
 		//Save the position P loop information into a file for easy tuning
-		file.open("/home/lvuser/position1.csv", ofstream::app);
+		file.open("/home/lvuser/position1.csv");
 		//Set point, controller output, actual value
 		file<<posSetPoint<<","<<speedSetPoint<<","<<posCurLoc<<endl;
 		file.close();
 
 		//Save the speed PI loop information into a file for easy tuning
-		file.open("/home/lvuser/speed1.csv", ofstream::app);
+		file.open("/home/lvuser/speed1.csv");
 		//Set point, controller output, actual value
 		file<<speedSetPoint<<","<<motorOutput<<","<<curSpeed<<endl;
 		file.close();
