@@ -1,7 +1,7 @@
 #include "Lift.h"
 
 Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
-		int upperBoundPort, int lowerBoundPort, Spatula* spatula, string name) : MORESubsystem(name)
+		int upperBoundPort, int lowerBoundPort, Spatula* spatula, string robotNumber, string name) : MORESubsystem(name)
 {
 	liftMotor = new CANTalon(talonDeviceNumber);
 	liftEncoder = new Encoder(encoAPort, encoBPort);
@@ -22,13 +22,28 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 
 	acquireState = IDLE_STATE;
 
-	currentLevel = 0;
-	levelPotValues[0] = 860;
-	levelPotValues[1] = 2000;
-	levelPotValues[2] = 2500;
-	levelPotValues[3] = 3050;
-	levelPotValues[4] = 3520;
-	levelPotValues[5] = 3550;
+	//Use these values for the practice bot
+	if(robotNumber == "2")
+	{
+		currentLevel = 0;
+		levelPotValues[0] = 860;
+		levelPotValues[1] = 2000;
+		levelPotValues[2] = 2500;
+		levelPotValues[3] = 3050;
+		levelPotValues[4] = 3520;
+		levelPotValues[5] = 3550;
+	}
+	//Use these values for the competition bot
+	else
+	{
+		currentLevel = 0;
+		levelPotValues[0] = 860;
+		levelPotValues[1] = 2000;
+		levelPotValues[2] = 2500;
+		levelPotValues[3] = 3050;
+		levelPotValues[4] = 3520;
+		levelPotValues[5] = 3550;
+	}
 }
 
 Lift::~Lift()

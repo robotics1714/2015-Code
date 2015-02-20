@@ -7,12 +7,25 @@
 
 #include "Spatula.h"
 
-Spatula::Spatula(int talonDeviceNumber, int potPort, string name) : MORESubsystem(name)
+Spatula::Spatula(int talonDeviceNumber, int potPort, string robotNumber, string name) : MORESubsystem(name)
 {
 	rotaryMotor = new CANTalon(talonDeviceNumber);
 	pot = new AnalogInput(potPort);
 	movingUp=false;
 	movingDown=false;
+
+	//Use these values for the practice bot
+	if(robotNumber == "2")
+	{
+		spatClosedVal = SPATULA_CLOSED_2;
+		spatOpenVal = SPATULA_OPEN_2;
+	}
+	//Use these values for the competition bot
+	else
+	{
+		spatClosedVal = SPATULA_CLOSED_1;
+		spatOpenVal = SPATULA_OPEN_2;
+	}
 }
 
 Spatula::~Spatula()
@@ -50,7 +63,7 @@ bool Spatula::MoveUp()
 	if(movingUp)
 	{
 		///Move up if the spatula isn't up already
-		if(pot->GetAverageValue() > SPATULA_CLOSED)
+		if(pot->GetAverageValue() > spatClosedVal)
 		{
 			rotaryMotor->Set(CURVE_IN);
 		}
@@ -70,7 +83,7 @@ bool Spatula::MoveDown()
 	if(movingDown)
 	{
 		///Move down if the spatula isn't moving
-		if(pot->GetAverageValue() < SPATULA_OPEN)
+		if(pot->GetAverageValue() < spatOpenVal)
 		{
 			rotaryMotor->Set(CURVE_OUT);
 		}

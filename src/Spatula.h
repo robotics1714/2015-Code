@@ -8,9 +8,11 @@
 #ifndef SPATULA_H
 #define SPATULA_H
 
-#define SPATULA_CLOSED 774
-#define SPATULA_OPEN 1300
+#define SPATULA_CLOSED_1 774
+#define SPATULA_OPEN_1 1300
 
+#define SPATULA_CLOSED_2 774
+#define SPATULA_OPEN_2 1300
 
 #define CURVE_IN -1.0
 #define CURVE_OUT  1.0
@@ -27,6 +29,8 @@ private:
 	AnalogInput* pot;
 	bool movingUp;
 	bool movingDown;
+	int spatClosedVal;
+	int spatOpenVal;
 public:
 	/**
 	 * The constructor for the Spatula class
@@ -35,7 +39,7 @@ public:
 	 * @param potPort The port of the potentiometer for the spatula
 	 * @param name The name of the subsystem
 	 */
-	Spatula(int talonDeviceNumber, int potPort, string name);
+	Spatula(int talonDeviceNumber, int potPort, string robotNumber, string name);
 	/**
 	 * The deconstructor for the Spatula class
 	 */

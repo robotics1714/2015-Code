@@ -1,6 +1,7 @@
 #include "MORESubsystem.h"
 #include <queue>
 #include <cmath>
+#include <fstream>
 #include "WPILib.h"
 #include "AutoStep.h"
 #include "AutoTimer.h"
@@ -71,9 +72,26 @@ private:
 
 		drive->getGyro()->Reset();
 
-		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_POT_PORT, "SPATULA");
+		//Read in whether this is robot 1 or 2
+		string robotNumber;
+		ifstream file;
+		file.open("/home/lvuser/robot.txt");
+		//Check if the file opened correctly
+		if(!file.is_open())
+		{
+			//If not, set it to the competition robot by default
+			robotNumber = "1";
+		}
+		else
+		{
+			//If it opened correctly, read the file
+			file>>robotNumber;
+		}
+		file.close();
+
+		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_POT_PORT, robotNumber, "SPATULA");
 		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_POT_PORT, LIFT_ENCO_A_PORT, LIFT_ENCO_B_PORT,
-				LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT, spatula, "LIFT");
+				LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT, spatula, robotNumber, "LIFT");
 		rake = new Rake(RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER, RAKE_UP_ACTUATING_SOLENOID_PORT, RAKE_DOWN_ACTUATING_SOLENOID_PORT,
 				RAKE_DRAW_IN_LIMIT_PORT, "RAKE");
 
@@ -89,6 +107,9 @@ private:
 
 		//Move the rake up
 		rake->MoveUp();
+
+		//Print which robot we're using
+		SmartDashboard::PutString("Robot: ", (robotNumber == "2")?"Practice Bot":"Competition Bot");
 	}
 
 	void AutonomousInit()

@@ -55,7 +55,7 @@ public:
 	 * @param name the name of the subsystem
 	 */
 	Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
-			int upperBoundPort, int lowerBoundPort, Spatula* spatula, string name);
+			int upperBoundPort, int lowerBoundPort, Spatula* spatula, string robotNumber, string name);
 	/**
 	 * The deconstructor for the Lift class
 	 */
