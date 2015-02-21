@@ -26,12 +26,12 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 	if(robotNumber == "2")
 	{
 		currentLevel = 0;
-		levelPotValues[0] = 860;
-		levelPotValues[1] = 2000;
-		levelPotValues[2] = 2500;
-		levelPotValues[3] = 3050;
-		levelPotValues[4] = 3520;
-		levelPotValues[5] = 3550;
+		levelPotValues[0] = 245;//860;
+		levelPotValues[1] = 1385;//2000;
+		levelPotValues[2] = 1885;//2500;
+		levelPotValues[3] = 2435;//3050;
+		levelPotValues[4] = 2770;//3520;
+		levelPotValues[5] = 2890;//3550;
 	}
 	//Use these values for the competition bot
 	else
@@ -99,9 +99,9 @@ bool Lift::MoveToLevel()
 	float speedError;
 	float motorOutput;
 	//TODO tune this
-	float posKP = 0.02;
-	float speedKP = 0.07;
-	float speedKI = 0.0001;
+	float posKP = 0.018;
+	float speedKP = 0.08;
+	float speedKI = 0;//0.0001;
 	ofstream file;
 
 	//Check if the lift is with 0.25in of the level
@@ -125,6 +125,10 @@ bool Lift::MoveToLevel()
 		speedError = speedSetPoint - curSpeed;
 		integral += (speedError * speedKI);
 		motorOutput = (speedError * speedKP) + (integral);
+		if(motorOutput < 0)
+			motorOutput = -1;
+		else if(motorOutput > 0)
+			motorOutput = 0.75;
 
 		//If the motor output is 100%, we don't need to add to the integral, so get rid of the integral we added this loop
 		if((motorOutput >= 1) || (motorOutput <= -1))
@@ -145,16 +149,16 @@ bool Lift::MoveToLevel()
 		SmartDashboard::PutNumber("Speed Error", speedError);
 
 		//Save the position P loop information into a file for easy tuning
-		file.open("/home/lvuser/position1.csv");
+		/*file.open("/home/lvuser/position1.csv", ofstream::app);
 		//Set point, controller output, actual value
 		file<<posSetPoint<<","<<speedSetPoint<<","<<posCurLoc<<endl;
 		file.close();
 
 		//Save the speed PI loop information into a file for easy tuning
-		file.open("/home/lvuser/speed1.csv");
+		file.open("/home/lvuser/speed1.csv", ofstream::app);
 		//Set point, controller output, actual value
 		file<<speedSetPoint<<","<<motorOutput<<","<<curSpeed<<endl;
-		file.close();
+		file.close();*/
 	}
 	else if(!manuallyMoving)
 	{
@@ -204,6 +208,11 @@ int Lift::Acquire()
 	}
 
 	return acquireState;
+}
+
+void Lift::override(float speed)
+{
+	liftMotor->Set(speed);
 }
 
 void Lift::Stop()

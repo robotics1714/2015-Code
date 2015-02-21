@@ -147,6 +147,8 @@ public:
 	 */
 	bool GetMovingToLevel(){return movingToLevel;}
 
+	void override(float speed);
+
 	//MORESubsystem auto functions
 	void SetUpAuto(AutoInstructions instructions) override;
 	int Auto(AutoInstructions instructions) override;

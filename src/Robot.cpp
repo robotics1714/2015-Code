@@ -59,6 +59,7 @@ private:
 
 	//For autonomous
 	queue<AutoStep*> autoSteps;
+	SendableChooser* autoChooser;
 
 	void RobotInit()
 	{
@@ -110,6 +111,11 @@ private:
 		//Move the rake up
 		rake->MoveUp();
 
+		//Set up the choices for auto
+		autoChooser = new SendableChooser();
+		autoChooser->AddDefault("Bring In Rake", new string("RAKE_IN"));
+		autoChooser->AddObject("Keep Out Rake", new string("RAKE_OUT"));
+
 		//Print which robot we're using
 		SmartDashboard::PutString("Robot: ", (robotNumber == "2")?"Practice Bot":"Competition Bot");
 		cout<<robotNumber;
@@ -118,6 +124,7 @@ private:
 	void AutonomousInit()
 	{
 		drive->getGyro()->Reset();
+		string autoChoice = *(string*)autoChooser->GetSelected();
 
 		//Get how long to wait at the beginning of autonomous from SmartDashboard
 		double wait = SmartDashboard::GetNumber("Auto Delay");
@@ -339,15 +346,17 @@ private:
 		{
 			//Up
 			lift->Move(-1.0);
+			//lift->override(-0.5);
 			lift->SetManuallyMoving(true);
 		}
 		else if(stick->GetRawButton(4))
 		{
 			//Down
 			lift->Move(0.75);
+			//lift->override(0.5);
 			lift->SetManuallyMoving(true);
 		}
-		else
+		else if(!lift->GetMovingToLevel())
 		{
 			lift->Move(0);
 		}
@@ -388,6 +397,7 @@ private:
 		moveToLevelButtonPressed = (stick->GetRawButton(12) || stick->GetRawButton(11) ||
 				stick->GetRawButton(10) || stick->GetRawButton(9) || stick->GetRawButton(8) || stick->GetRawButton(7));
 
+
 		//Bring in the extensions
 		if(stick->GetRawButton(3))
 		{
@@ -422,6 +432,7 @@ private:
 		SmartDashboard::PutNumber("Lift Position", lift->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Spat Position", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+		SmartDashboard::PutNumber("Upper Bound", lift->getUpperBound()->Get());
 	}
 
 	void DisabledPeriodic()
