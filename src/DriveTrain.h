@@ -31,6 +31,8 @@ private:
 	//A timer to be used to keep track of how long the drive train moves
 	Timer* autoTimer;
 
+	float lastRampUpAutoOutput;
+
 	//used to keep the robot at the same heading in teleop when its not turning
 	float currentHeading;
 
@@ -40,6 +42,7 @@ public:
 	static const int TIME = 1; /**< this autonomous flag will tell the drive-train to drive for a specified time in autonomous */
 	static const int BUMP = 2; /**< this autonomous flag will tell the drive-train to drive for a specified time in autonomous*/
 	static const int ULTRASONIC = 4; /**< this autonomous flag will tell the drive-train to drive until we get close to the step according to the ultrasonic sensor*/
+	static const int RAMP_UP = 8; /**< this autonomous flag will tell the drive-train to ramp up to the desired speed*/
 
 	/**
 	 * The constructor for the DriveTrain class.

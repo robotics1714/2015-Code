@@ -16,6 +16,7 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	sonic->SetAutomaticMode(true);
 	autoTimer = new Timer();
 	currentHeading = 0;
+	lastRampUpAutoOutput = 0;//Start the ramp up at 25%
 
 	drive->SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
 	drive->SetInvertedMotor(RobotDrive::kRearRightMotor, true);
@@ -84,6 +85,9 @@ void DriveTrain::SetUpAuto(AutoInstructions instructions)
 	//Reset and start on the timer
 	autoTimer->Reset();
 	autoTimer->Start();
+
+	//Start the ramp up at 25%
+	lastRampUpAutoOutput = 0.25;
 }
 
 /*param1: magnitude [-1, 1]
@@ -174,6 +178,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 			}
 			drive->MecanumDrive_Polar(speed, dir, turnSpeed);
 			SmartDashboard::PutNumber("Auto Speed:", speed);
+			return (int)(true);
 		}
 		else
 		{
@@ -195,6 +200,25 @@ int DriveTrain::Auto(AutoInstructions instructions)
 			}
 			file<<endl;
 			file.close();*/
+			return (int)(false);
+		}
+	}
+	if((instructions.flags & RAMP_UP) == RAMP_UP)
+	{
+		if(autoTimer->Get() <= time)
+		{
+			float k = 0.02;
+			//This is the first of difference sort
+			float adjustedSpeed = lastRampUpAutoOutput + (k * (magnitude - lastRampUpAutoOutput));
+			//Update the lastRampUpAutoOutput
+			lastRampUpAutoOutput = adjustedSpeed;
+			//Move
+			drive->MecanumDrive_Polar(adjustedSpeed, dir, turnSpeed);
+			return (int)(true);
+		}
+		else
+		{
+			drive->MecanumDrive_Polar(0, 0, 0);
 			return (int)(false);
 		}
 	}

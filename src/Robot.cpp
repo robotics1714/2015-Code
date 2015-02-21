@@ -163,13 +163,33 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
-		//Fourth step, drive forwards away from the step using the ultrasonic sensor
+		//THIS IS THE DRIVE AWAY SEQUENCE THAT HAS A BURST OF SPEED AND THEN RAMPS UP THE SPEED
+		//Have a short burst of speed to dislodge the cantainers
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0.75;//Speed
+		currentInstr.param2 = 0;//Direction
+		currentInstr.param3 = 0;//Rotation
+		currentInstr.param4 = 0.75;//Time
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(drive, currentInstr, "Short Burst"));
+
+		//Ramp up
+		currentInstr.flags = DriveTrain::RAMP_UP;
+		currentInstr.param1 = 0.75;//Speed
+		currentInstr.param2 = 0;//Direction
+		currentInstr.param3 = 0;//Rotation
+		currentInstr.param4 = 1;//Time
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(drive, currentInstr, "Ramp Up"));
+
+		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
+		/*//Fourth step, drive forwards away from the step
 		currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 2.5;//Go for 1 second
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));*/
 
 		//fifth step drive forward full speed
 		/*currentInstr.flags = DriveTrain::TIME;
