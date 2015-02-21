@@ -16,7 +16,7 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	sonic->SetAutomaticMode(true);
 	autoTimer = new Timer();
 	currentHeading = 0;
-	lastRampUpAutoOutput = 0;//Start the ramp up at 25%
+	lastRampUpAutoOutput = 0.25;//Start the ramp up at 25%
 
 	drive->SetInvertedMotor(RobotDrive::kFrontRightMotor, true);
 	drive->SetInvertedMotor(RobotDrive::kRearRightMotor, true);
