@@ -154,14 +154,20 @@ private:
 		currentInstr.param4 = 7.0;//7 second safety timer
 		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
 
-		//Wait a bit
-		currentInstr.flags = 0;
-		currentInstr.param1 = 1.5;//Wait
+		//Wait a bit and have the robot center itself
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0;
+		currentInstr.param2 = 0;
+		currentInstr.param3 = 0;
+		currentInstr.param4 = 1.25;
+		autoSteps.push(new AutoStep(drive, currentInstr, "wait and fix itself"));
+		/*currentInstr.flags = 0;
+		currentInstr.param1 = 1;//Wait
 		currentInstr.param2 = 0;//unused
 		currentInstr.param3 = 0;//unused
 		currentInstr.param4 = 0;//unused
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));*/
 
 		//Drop the rake
 		/*currentInstr.flags = Rake::AUTO_MOVE_DOWN;
@@ -197,11 +203,18 @@ private:
 		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
 		//Fourth step, drive forwards away from the step
 		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.5;//Go half speed
+		currentInstr.param1 = 0.45;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 2.75;//Go for 1 second
+		currentInstr.param4 = 3.1;//Go for 1 second
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
+
+		//Wait between changing directions
+		currentInstr.flags = 0;
+		currentInstr.param1 = 0.3;
+		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
 		//fifth step drive forward full speed
 		/*currentInstr.flags = DriveTrain::TIME;
@@ -212,6 +225,44 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));*/
 
+		//Bring the rake up
+		currentInstr.flags = Rake::AUTO_MOVE_UP;
+		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
+
+		//Drive towards the step a little
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = -0.25;//Speed
+		currentInstr.param2 = 0;//Direction
+		currentInstr.param3 = 0;//Rotation
+		currentInstr.param4 = 2.7;//3;
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive forwards for the re-rake"));
+
+		//Bring the rake up
+		currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(rake, currentInstr, "Lower Rake"));
+
+		//Wait for it
+		currentInstr.flags = 0;//unused
+		currentInstr.param1 = 1;//Time
+		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;//Unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "WAit after lowering rake"));
+
+		//Drive forwards again
+		currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0.3;//Speed
+		currentInstr.param2 = 0;//Direction
+		currentInstr.param3 = 0;//Rotation
+		currentInstr.param4 = 3.25;//2;//Time
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(drive, currentInstr, "Re-Rake"));
+
+		//Raise the rake up again
 		//Bring the rake up
 		currentInstr.flags = Rake::AUTO_MOVE_UP;
 		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
@@ -438,6 +489,8 @@ private:
 		SmartDashboard::PutNumber("Spat Position", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
 		SmartDashboard::PutNumber("Upper Bound", lift->getUpperBound()->Get());
+		SmartDashboard::PutNumber("Left Bumb", drive->GetLeftLimit()->Get());
+		SmartDashboard::PutNumber("Right Bumb", drive->GetRightLimit()->Get());
 	}
 
 	void DisabledPeriodic()
