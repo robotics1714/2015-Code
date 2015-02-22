@@ -123,8 +123,8 @@ private:
 
 	void AutonomousInit()
 	{
-		drive->getGyro()->Reset();
-		string autoChoice = *(string*)autoChooser->GetSelected();
+		//drive->getGyro()->Reset();
+		//string autoChoice = *(string*)autoChooser->GetSelected();
 
 		//Get how long to wait at the beginning of autonomous from SmartDashboard
 		double wait = SmartDashboard::GetNumber("Auto Delay");
@@ -140,18 +140,23 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "First Wait"));
 
+		//lower the rake
+		currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
+
 		//Second step, drive backwards towards the step until we are 7.5 inches away
 		currentInstr.flags = DriveTrain::ULTRASONIC;
 		currentInstr.param1 = -1.0;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 7.0;//7 second safety timer
-		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
 
 		//Wait a bit
 		currentInstr.flags = 0;
-		currentInstr.param1 = 1;//Wait
+		currentInstr.param1 = 1.5;//Wait
 		currentInstr.param2 = 0;//unused
 		currentInstr.param3 = 0;//unused
 		currentInstr.param4 = 0;//unused
@@ -159,7 +164,7 @@ private:
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
 
 		//Drop the rake
-		currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+		/*currentInstr.flags = Rake::AUTO_MOVE_DOWN;
 		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
@@ -168,12 +173,12 @@ private:
 		currentInstr.flags = 0;
 		currentInstr.param1 = 1.5;//Time to wait. the rest of the params are unused
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));*/
 
 		//THIS IS THE DRIVE AWAY SEQUENCE THAT HAS A BURST OF SPEED AND THEN RAMPS UP THE SPEED
 		//Have a short burst of speed to dislodge the cantainers
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.75;//Speed
+		/*currentInstr.flags = DriveTrain::TIME;
+		currentInstr.param1 = 0.5;//Speed
 		currentInstr.param2 = 0;//Direction
 		currentInstr.param3 = 0;//Rotation
 		currentInstr.param4 = 0.75;//Time
@@ -185,18 +190,18 @@ private:
 		currentInstr.param1 = 0.75;//Speed
 		currentInstr.param2 = 0;//Direction
 		currentInstr.param3 = 0;//Rotation
-		currentInstr.param4 = 1;//Time
+		currentInstr.param4 = 1.5;//Time
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Ramp Up"));
+		autoSteps.push(new AutoStep(drive, currentInstr, "Ramp Up"));*/
 
 		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
-		/*//Fourth step, drive forwards away from the step
+		//Fourth step, drive forwards away from the step
 		currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.5;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 2.5;//Go for 1 second
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));*/
+		currentInstr.param4 = 2.75;//Go for 1 second
+		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
 		//fifth step drive forward full speed
 		/*currentInstr.flags = DriveTrain::TIME;
@@ -270,7 +275,7 @@ private:
 		}
 		if((fabs(stick->GetTwist()) > 0.12) && (!stick->GetRawButton(1)))
 		{
-			twist = stick->GetTwist()*(0.6);
+			twist = stick->GetTwist()*(0.5);
 		}
 
 		/*//Change between tank and mecanum drive

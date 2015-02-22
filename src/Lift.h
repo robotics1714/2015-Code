@@ -14,8 +14,12 @@
 #include "Spatula.h"
 
 #define DISTANCE_PER_PULSE 58.75/170757.0 //This is the displacement of the lift divided by the encoder counts it takes to get there
-#define HEIGHT_OF_TOTE 400//Pot values that relate to the height of the platform/totes
-#define HEIGHT_OF_SCORING_PLAT 150
+#define LEVEL_0 586
+#define DISTANCE_0_TO_1 1140
+#define DISTANCE_0_TO_2 1640
+#define DISTANCE_0_TO_3 2190
+#define DISTANCE_0_TO_4 2550
+#define DISTANCE_0_TO_5 2590
 
 #define SPEED_LIMIT 18//3 //the max speed the MoveToLevel functions can make the lift go in in/s
 
