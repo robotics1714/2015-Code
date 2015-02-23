@@ -113,8 +113,8 @@ private:
 
 		//Set up the choices for auto
 		autoChooser = new SendableChooser();
-		autoChooser->AddDefault("Bring In Rake", new string("RAKE_IN"));
-		autoChooser->AddObject("Keep Out Rake", new string("RAKE_OUT"));
+		autoChooser->AddDefault("Single Rake", new string("SINGLE"));
+		autoChooser->AddObject("Re-Rake", new string("RE"));
 		//Put the chooser on SmartDashboard
 		SmartDashboard::PutData("Auto Selection", autoChooser);
 
@@ -204,12 +204,24 @@ private:
 		autoSteps.push(new AutoStep(drive, currentInstr, "Ramp Up"));*/
 
 		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
+		//Choose how long we go for driving back
+		float driveBackTime;
+		if(autoChoice == "SINGLE")
+		{
+			//If we are only doing a single rake
+			driveBackTime = 3.5;
+		}
+		else
+		{
+			//If we are doing a re-rake
+			driveBackTime = 3.1;
+		}
 		//Fourth step, drive forwards away from the step
 		currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.45;//Go half speed
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 3.1;//Go for 1 second
+		currentInstr.param4 = driveBackTime;//Time
 		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
 		//Wait between changing directions
@@ -221,12 +233,12 @@ private:
 
 		//fifth step drive forward full speed
 		/*currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.7;//Go half speed
-		currentInstr.param2 = 0.0;//Go straight
-		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 1.75;//Go for this long
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));*/
+			currentInstr.param1 = 0.7;//Go half speed
+			currentInstr.param2 = 0.0;//Go straight
+			currentInstr.param3 = 0.0;//No rotation
+			currentInstr.param4 = 1.75;//Go for this long
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));*/
 
 		//Bring the rake up
 		currentInstr.flags = Rake::AUTO_MOVE_UP;
@@ -234,46 +246,50 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
 
-		//Drive towards the step a little
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = -0.25;//Speed
-		currentInstr.param2 = 0;//Direction
-		currentInstr.param3 = 0;//Rotation
-		currentInstr.param4 = 2.7;//3;
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Drive forwards for the re-rake"));
+		//Do this if we are doing a re-rake
+		if(autoChoice == "RE")
+		{
+			//Drive towards the step a little
+			currentInstr.flags = DriveTrain::TIME;
+			currentInstr.param1 = -0.25;//Speed
+			currentInstr.param2 = 0;//Direction
+			currentInstr.param3 = 0;//Rotation
+			currentInstr.param4 = 2.7;//3;
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(drive, currentInstr, "Drive forwards for the re-rake"));
 
-		//Bring the rake up
-		currentInstr.flags = Rake::AUTO_MOVE_DOWN;
-		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(rake, currentInstr, "Lower Rake"));
+			//Bring the rake up
+			currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(rake, currentInstr, "Lower Rake"));
 
-		//Wait for it
-		currentInstr.flags = 0;//unused
-		currentInstr.param1 = 1;//Time
-		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;//Unused
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "WAit after lowering rake"));
+			//Wait for it
+			currentInstr.flags = 0;//unused
+			currentInstr.param1 = 1;//Time
+			currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;//Unused
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "WAit after lowering rake"));
 
-		//Drive forwards again
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0.3;//Speed
-		currentInstr.param2 = 0;//Direction
-		currentInstr.param3 = 0;//Rotation
-		currentInstr.param4 = 3.25;//2;//Time
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Re-Rake"));
+			//Drive forwards again
+			currentInstr.flags = DriveTrain::TIME;
+			currentInstr.param1 = 0.3;//Speed
+			currentInstr.param2 = 0;//Direction
+			currentInstr.param3 = 0;//Rotation
+			currentInstr.param4 = 3.25;//2;//Time
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(drive, currentInstr, "Re-Rake"));
 
-		//Raise the rake up again
-		//Bring the rake up
-		currentInstr.flags = Rake::AUTO_MOVE_UP;
-		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
+			//Raise the rake up again
+			//Bring the rake up
+			currentInstr.flags = Rake::AUTO_MOVE_UP;
+			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
+		}
 
 		//Bring in the extensions
-		/*currentInstr.flags = Rake::AUTO_DRAW_IN;
+		currentInstr.flags = Rake::AUTO_DRAW_IN;
 		currentInstr.param1 = -1;//Speed to draw in
 		currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
 		//Add the step to the queue
@@ -286,7 +302,7 @@ private:
 		currentInstr.param3 = 0;//Rotation
 		currentInstr.param4 = 0.75;//Time
 		//Add the step to the queue
-		autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));*/
+		autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));
 	}
 
 	void AutonomousPeriodic()
