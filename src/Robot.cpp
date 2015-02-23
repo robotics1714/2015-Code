@@ -115,6 +115,9 @@ private:
 		autoChooser = new SendableChooser();
 		autoChooser->AddDefault("Bring In Rake", new string("RAKE_IN"));
 		autoChooser->AddObject("Keep Out Rake", new string("RAKE_OUT"));
+		//Put the chooser on SmartDashboard
+		SmartDashboard::PutData("Auto Selection", autoChooser);
+
 
 		//Print which robot we're using
 		SmartDashboard::PutString("Robot: ", (robotNumber == "2")?"Practice Bot":"Competition Bot");
@@ -123,8 +126,8 @@ private:
 
 	void AutonomousInit()
 	{
-		//drive->getGyro()->Reset();
-		//string autoChoice = *(string*)autoChooser->GetSelected();
+		drive->getGyro()->Reset();
+		string autoChoice = *(string*)autoChooser->GetSelected();
 
 		//Get how long to wait at the beginning of autonomous from SmartDashboard
 		double wait = SmartDashboard::GetNumber("Auto Delay");
