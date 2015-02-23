@@ -499,17 +499,7 @@ private:
 		lift->Acquire();
 
 		//Print out information for the driver/debugger
-		SmartDashboard::PutNumber("Lift Upper Bound", lift->getUpperBound()->Get());
-		SmartDashboard::PutNumber("Lift Lower Bound", lift->getLowerBound()->Get());
-		SmartDashboard::PutNumber("Lift Velocity", lift->GetEnco()->GetRate());
-		SmartDashboard::PutNumber("Lift Enco Pos", lift->GetEnco()->GetDistance());
-		SmartDashboard::PutNumber("Lift Enco Pulses", lift->GetEnco()->GetRaw());
-		SmartDashboard::PutNumber("Lift Position", lift->GetPot()->GetAverageValue());
-		SmartDashboard::PutNumber("Spat Position", spatula->GetPot()->GetAverageValue());
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
-		SmartDashboard::PutNumber("Upper Bound", lift->getUpperBound()->Get());
-		SmartDashboard::PutNumber("Left Bumb", drive->GetLeftLimit()->Get());
-		SmartDashboard::PutNumber("Right Bumb", drive->GetRightLimit()->Get());
 	}
 
 	void DisabledPeriodic()
