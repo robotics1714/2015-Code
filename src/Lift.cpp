@@ -170,9 +170,6 @@ bool Lift::MoveToLevel()
 	//Reset manuallyMoving for the next loop
 	manuallyMoving = false;
 
-	SmartDashboard::PutNumber("speedSetPoint", speedSetPoint);
-	SmartDashboard::PutNumber("motorOutput", motorOutput);
-
 	return movingToLevel;
 }
 
