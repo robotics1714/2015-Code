@@ -37,12 +37,12 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 	else
 	{
 		currentLevel = 0;
-		levelPotValues[0] = 860;
-		levelPotValues[1] = 2000;
-		levelPotValues[2] = 2500;
-		levelPotValues[3] = 3050;
-		levelPotValues[4] = 3520;
-		levelPotValues[5] = 3550;
+		levelPotValues[0] = LEVEL_0_R1;
+		levelPotValues[1] = LEVEL_0_R1 + DISTANCE_0_TO_1;
+		levelPotValues[2] = LEVEL_0_R1 + DISTANCE_0_TO_2;
+		levelPotValues[3] = LEVEL_0_R1 + DISTANCE_0_TO_3;
+		levelPotValues[4] = LEVEL_0_R1 + DISTANCE_0_TO_4;
+		levelPotValues[5] = LEVEL_0_R1 + DISTANCE_0_TO_5;
 	}
 }
 

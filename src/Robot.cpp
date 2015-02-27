@@ -488,6 +488,26 @@ private:
 			rake->Move(0);
 		}
 
+		//manual spatula commands
+		if(xbox->IsXPressed())
+		{
+			spatula->Rotate(0.25);
+		}
+		else if(xbox->IsBPressed())
+		{
+			spatula->Rotate(-0.25);
+		}
+		else if(!spatula->MoveDown() && !spatula->MoveUp())
+		{
+			spatula->Rotate(0);
+		}
+
+		//Button for resseting the gyro just incase
+		if(xbox->IsLeftBumperPressed() && xbox->IsRightBumperPressed())
+		{
+			drive->ResetAutoCorrect();
+		}
+
 		drive->Drive(x, y, twist);
 
 		//These functions are for state machines and need to be called every call of the function
@@ -500,6 +520,8 @@ private:
 
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+		SmartDashboard::PutNumber("Spat Pos", spatula->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
 	}
 
 	void DisabledPeriodic()
