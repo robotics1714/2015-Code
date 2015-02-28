@@ -115,6 +115,7 @@ private:
 		autoChooser = new SendableChooser();
 		autoChooser->AddDefault("Single Rake", new string("SINGLE"));
 		autoChooser->AddObject("Re-Rake", new string("RE"));
+		autoChooser->AddObject("Two Containers", new string("TWO"));
 		//Put the chooser on SmartDashboard
 		SmartDashboard::PutData("Auto Selection", autoChooser);
 
@@ -206,15 +207,23 @@ private:
 		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
 		//Choose how long we go for driving back
 		float driveBackTime;
-		if(autoChoice == "SINGLE")
+		//Two container auto
+		if(autoChoice == "TWO")
 		{
 			//If we are only doing a single rake
-			driveBackTime = 3.5;
+			driveBackTime = 2.5;
 		}
-		else
+		//Re-Rake auto
+		else if(autoChoice == "RE")
 		{
 			//If we are doing a re-rake
-			driveBackTime = 3.1;
+			driveBackTime = 2.5;
+		}
+		//Four container single rake
+		else
+		{
+			//If we are only doing a single rake
+			driveBackTime = 3;
 		}
 		//Fourth step, drive forwards away from the step
 		currentInstr.flags = DriveTrain::TIME;
@@ -488,6 +497,26 @@ private:
 			rake->Move(0);
 		}
 
+		//manual spatula commands
+		if(xbox->IsXPressed())
+		{
+			spatula->Rotate(0.25);
+		}
+		else if(xbox->IsBPressed())
+		{
+			spatula->Rotate(-0.25);
+		}
+		else if(!spatula->MoveDown() && !spatula->MoveUp())
+		{
+			spatula->Rotate(0);
+		}
+
+		//Button for resseting the gyro just incase
+		if(xbox->IsLeftBumperPressed() && xbox->IsRightBumperPressed())
+		{
+			drive->ResetAutoCorrect();
+		}
+
 		drive->Drive(x, y, twist);
 
 		//These functions are for state machines and need to be called every call of the function
@@ -500,6 +529,8 @@ private:
 
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+		SmartDashboard::PutNumber("Spat Pos", spatula->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
 	}
 
 	void DisabledPeriodic()

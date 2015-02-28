@@ -24,7 +24,7 @@ Spatula::Spatula(int talonDeviceNumber, int potPort, string robotNumber, string 
 	else
 	{
 		spatClosedVal = SPATULA_CLOSED_1;
-		spatOpenVal = SPATULA_OPEN_2;
+		spatOpenVal = SPATULA_OPEN_1;
 	}
 }
 
