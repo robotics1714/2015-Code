@@ -327,6 +327,12 @@ private:
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));
 		}
+
+		//Open the spatula
+		currentInstr.flags = Spatula::OPEN_SPAT;
+		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;//unused
+		//Add the step to the queue
+		autoSteps.push(new AutoStep(spatula, currentInstr, "Open Spatula"));
 	}
 
 	void AutonomousPeriodic()
