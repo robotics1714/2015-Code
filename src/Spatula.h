@@ -9,10 +9,10 @@
 #define SPATULA_H
 
 #define SPATULA_CLOSED_1 550
-#define SPATULA_OPEN_1 925
+//#define SPATULA_OPEN_1 925
 
 #define SPATULA_CLOSED_2 3179//3242
-#define SPATULA_OPEN_2 3700
+//#define SPATULA_OPEN_2 3700
 
 #define CURVE_IN -1.0
 #define CURVE_OUT  1.0
@@ -20,18 +20,22 @@
 
 #include "CANTalon.h"
 #include "MORESubsystem.h"
-#include "AnalogInput.h"
+#include "Encoder.h"
+#include "DigitalInput.h"
+#include "GlobalDefines.h"
 
 class Spatula : public MORESubsystem
 {
 private:
 	CANTalon* rotaryMotor;
-	AnalogInput* pot;
+	Encoder* enco;
+	DigitalInput* openLimit;
 	bool movingUp;
 	bool movingDown;
 	int spatClosedVal;
-	int spatOpenVal;
+	//int spatOpenVal;
 public:
+	static const int OPEN_SPAT = 1;/**< this autonomous flag will tell the spatula to open*/
 	/**
 	 * The constructor for the Spatula class
 	 *
@@ -39,7 +43,7 @@ public:
 	 * @param potPort The port of the potentiometer for the spatula
 	 * @param name The name of the subsystem
 	 */
-	Spatula(int talonDeviceNumber, int potPort, string robotNumber, string name);
+	Spatula(int talonDeviceNumber, int encoAPort, int encoBPort, int openLimitPort, string robotNumber, string name);
 	/**
 	 * The deconstructor for the Spatula class
 	 */
@@ -80,9 +84,14 @@ public:
 	void Stop();
 
 	/**
-	 * @return Returns an instance of the potentiometer
+	 * @return Returns an instance of the encoder
 	 */
-	AnalogInput* GetPot(){return pot;}
+	Encoder* GetEnco(){return enco;}
+
+	/**
+	 * @return Returns an instance of the limit switch that tells the spatula if it is open
+	 */
+	DigitalInput* GetOpenLimit(){return openLimit;}
 
 	///MORESubsystem Auto Functions
 	void SetUpAuto(AutoInstructions instructions) override;

@@ -7,10 +7,12 @@
 
 #include "Spatula.h"
 
-Spatula::Spatula(int talonDeviceNumber, int potPort, string robotNumber, string name) : MORESubsystem(name)
+Spatula::Spatula(int talonDeviceNumber, int encoAPort, int encoBPort, int openLimitPort,
+		string robotNumber, string name) : MORESubsystem(name)
 {
 	rotaryMotor = new CANTalon(talonDeviceNumber);
-	pot = new AnalogInput(potPort);
+	enco = new Encoder(encoAPort, encoBPort);
+	openLimit = new DigitalInput(openLimitPort);
 	movingUp=false;
 	movingDown=false;
 
@@ -18,20 +20,21 @@ Spatula::Spatula(int talonDeviceNumber, int potPort, string robotNumber, string 
 	if(robotNumber == "2")
 	{
 		spatClosedVal = SPATULA_CLOSED_2;
-		spatOpenVal = SPATULA_OPEN_2;
+		//spatOpenVal = SPATULA_OPEN_2;
 	}
 	//Use these values for the competition bot
 	else
 	{
 		spatClosedVal = SPATULA_CLOSED_1;
-		spatOpenVal = SPATULA_OPEN_1;
+		//spatOpenVal = SPATULA_OPEN_1;
 	}
 }
 
 Spatula::~Spatula()
 {
 	delete rotaryMotor;
-	delete pot;
+	delete enco;
+	delete openLimit;
 }
 
 ///Set Motor Speed
@@ -63,7 +66,7 @@ bool Spatula::MoveUp()
 	if(movingUp)
 	{
 		///Move up if the spatula isn't up already
-		if(pot->GetAverageValue() > spatClosedVal)
+		if(enco->GetDistance() > spatClosedVal)
 		{
 			rotaryMotor->Set(CURVE_IN);
 		}
@@ -82,8 +85,8 @@ bool Spatula::MoveDown()
 	///Check if Motor is moving down
 	if(movingDown)
 	{
-		///Move down if the spatula isn't moving
-		if(pot->GetAverageValue() < spatOpenVal)
+		///Move down until the spatula hits the limit switch
+		if(openLimit->Get() == RELEASED)
 		{
 			rotaryMotor->Set(CURVE_OUT);
 		}
@@ -91,6 +94,8 @@ bool Spatula::MoveDown()
 		else
 		{
 			rotaryMotor->Set(0);
+			//Because we are at our "home", reset the encoder
+			enco->Reset();
 			movingDown=false;
 		}
 	}
@@ -106,11 +111,17 @@ void Spatula::Stop()
 
 void Spatula::SetUpAuto(AutoInstructions instructions)
 {
-	///TODO Fill this in
+	if((instructions.flags & OPEN_SPAT) == OPEN_SPAT)
+	{
+		StartMoveDown();
+	}
 }
 
 int Spatula::Auto(AutoInstructions instructions)
 {
-	///TODO fill this in
+	if((instructions.flags & OPEN_SPAT) == OPEN_SPAT)
+	{
+		return (int)MoveDown();
+	}
 	return 0;
 }

@@ -24,13 +24,16 @@
 
 #define LIFT_MOTOR_DEVICE_NUMBER 1
 #define LIFT_POT_PORT 1
-#define LIFT_ENCO_A_PORT 1
-#define LIFT_ENCO_B_PORT 2
+//#define LIFT_ENCO_A_PORT 1
+//#define LIFT_ENCO_B_PORT 2
 #define LIFT_UPPER_BOUND_PORT 5
 #define LIFT_LOWER_BOUND_PORT 4
 
 #define SPATULA_MOTOR_DEVICE_NUMBER 2
-#define SPATULA_POT_PORT 2
+#define SPATULA_ENCO_A_PORT 1
+#define SPATULA_ENCO_B_PORT 2
+#define SPATULA_OPEN_LIMIT_PORT 0
+//#define SPATULA_POT_PORT 2
 
 #define LEFT_BUMP_LIMIT_PORT 7
 #define RIGHT_BUMP_LIMIT_PORT 6
@@ -92,7 +95,8 @@ private:
 		}
 		file.close();
 
-		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_POT_PORT, robotNumber, "SPATULA");
+		spatula = new Spatula(SPATULA_MOTOR_DEVICE_NUMBER, SPATULA_ENCO_A_PORT, SPATULA_ENCO_B_PORT,
+				SPATULA_OPEN_LIMIT_PORT, robotNumber, "SPATULA");
 		lift = new Lift(LIFT_MOTOR_DEVICE_NUMBER, LIFT_POT_PORT, LIFT_UPPER_BOUND_PORT, LIFT_LOWER_BOUND_PORT,
 				spatula, robotNumber, "LIFT");
 		rake = new Rake(RAKE_DRAW_IN_MOTOR_DEVICE_NUMBER, RAKE_UP_ACTUATING_SOLENOID_PORT, RAKE_DOWN_ACTUATING_SOLENOID_PORT,
@@ -540,7 +544,8 @@ private:
 
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
-		SmartDashboard::PutNumber("Spat Pos", spatula->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
+		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
 	}
 
