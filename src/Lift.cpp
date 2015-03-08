@@ -1,12 +1,12 @@
 #include "Lift.h"
 
-Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
-		int upperBoundPort, int lowerBoundPort, Spatula* spatula, string robotNumber, string name) : MORESubsystem(name)
+Lift::Lift(int talonDeviceNumber, int liftPotPort, int upperBoundPort, int lowerBoundPort,
+		Spatula* spatula, string robotNumber, string name) : MORESubsystem(name)
 {
 	liftMotor = new CANTalon(talonDeviceNumber);
-	liftEncoder = new Encoder(encoAPort, encoBPort);
+	/*liftEncoder = new Encoder(encoAPort, encoBPort);
 	liftEncoder->SetDistancePerPulse(DISTANCE_PER_PULSE);
-	liftEncoder->Reset();
+	liftEncoder->Reset();*/
 
 	liftPot = new AnalogInput(liftPotPort);
 
@@ -49,7 +49,7 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
 Lift::~Lift()
 {
 	delete liftMotor;
-	delete liftEncoder;
+	//delete liftEncoder;
 	delete upperBound;
 	delete lowerBound;
 	delete spat;
@@ -95,13 +95,13 @@ bool Lift::MoveToLevel()
 	float posCurLoc = liftPot->GetAverageValue();//Position current location
 	float posError;
 	float speedSetPoint;
-	float curSpeed = liftEncoder->GetRate();
-	float speedError;
+	//float curSpeed = liftEncoder->GetRate();
+	//float speedError;
 	float motorOutput;
 	//TODO tune this
 	float posKP = 0.018;
-	float speedKP = 0.08;
-	float speedKI = 0;//0.0001;
+	//float speedKP = 0.08;
+	//float speedKI = 0;//0.0001;
 	ofstream file;
 
 	//Check if the lift is with 0.25in of the level
@@ -122,19 +122,21 @@ bool Lift::MoveToLevel()
 		}
 
 		//Calculate the motor output [-1, 1]
-		speedError = speedSetPoint - curSpeed;
+		/*speedError = speedSetPoint;
 		integral += (speedError * speedKI);
-		motorOutput = (speedError * speedKP) + (integral);
-		if(motorOutput < 0)
+		motorOutput = (speedError * speedKP) + (integral);*/
+		if(speedSetPoint < 0)
 			motorOutput = -1;
-		else if(motorOutput > 0)
+		else if(speedSetPoint > 0)
 			motorOutput = 0.75;
+		else
+			motorOutput = 0;
 
 		//If the motor output is 100%, we don't need to add to the integral, so get rid of the integral we added this loop
-		if((motorOutput >= 1) || (motorOutput <= -1))
+		/*if((motorOutput >= 1) || (motorOutput <= -1))
 		{
 			integral -= (speedError * speedKI);
-		}
+		}*/
 
 		//Move the motor yo
 		//Check if this is false, meaning a limit switch was pressed, so stop it
@@ -146,7 +148,6 @@ bool Lift::MoveToLevel()
 		}
 
 		SmartDashboard::PutNumber("Pos Error", posError);
-		SmartDashboard::PutNumber("Speed Error", speedError);
 
 		//Save the position P loop information into a file for easy tuning
 		/*file.open("/home/lvuser/position1.csv", ofstream::app);

@@ -28,7 +28,7 @@ class Lift : public MORESubsystem
 {
 private:
 	CANTalon* liftMotor;
-	Encoder*  liftEncoder;
+	//Encoder*  liftEncoder;
 	DigitalInput* upperBound;
 	DigitalInput* lowerBound;
 	AnalogInput* liftPot;
@@ -59,8 +59,8 @@ public:
 	 * @param lowerBoundPort The port for the limit switch that will be used as the lower bound of the lift
 	 * @param name the name of the subsystem
 	 */
-	Lift(int talonDeviceNumber, int liftPotPort, int encoAPort, int encoBPort,
-			int upperBoundPort, int lowerBoundPort, Spatula* spatula, string robotNumber, string name);
+	Lift(int talonDeviceNumber, int liftPotPort, int upperBoundPort, int lowerBoundPort,
+			Spatula* spatula, string robotNumber, string name);
 	/**
 	 * The deconstructor for the Lift class
 	 */
@@ -131,7 +131,7 @@ public:
 	/**
 	 * @return An instance of the lift encoder
 	 */
-	Encoder* GetEnco(){return liftEncoder;}
+	//Encoder* GetEnco(){return liftEncoder;}
 	/**
 	 * @return An instance of the lift potentiometer
 	 */
