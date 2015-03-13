@@ -16,6 +16,7 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
 	sonic->SetAutomaticMode(true);
 	autoTimer = new Timer();
+	tipTimer = new Timer();
 	currentHeading = 0;
 	lastRampUpAutoOutput = 0.25;//Start the ramp up at 25%
 
@@ -282,21 +283,33 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 float DriveTrain::GetAntiTiltSpeed()
 {
 	float speed;
+	float pitchAngle = pitchGyro->GetAngle();
 
-	//If the robot's tilt is equal to or greater than 35 degrees tilting back, drive backwards to correct it
-	if(pitchGyro->GetAngle() >= 35)
+	//If the robot's tilt is equal to or greater than 35 degrees tilting back and we still have hope of correcting
+	//ourselves, drive backwards to correct it
+	if(pitchAngle >= 35 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
 	{
 		speed = -0.75;
+		tipTimer->Start();
 	}
-	//If the robot's tilt is equal to or greater than 45 degrees tilting forwards, drive forwards to correct it
-	else if(pitchGyro->GetAngle() <= -45)
+	//If the robot's tilt is equal to or greater than 45 degrees tilting forwards and we still have hope of correcting
+	//ourselves, drive backwards to correct it
+	else if(pitchAngle <= -45 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
 	{
 		speed = 0.75;
+		tipTimer->Start();
 	}
-	//Otherwise, the robot is in good shape, so don't do anything
+	//Otherwise, the robot is in good shape (or we gave up on saving it), so don't do anything
 	else
 	{
 		speed = 0;
+	}
+
+	//If the robot is at an untippy pitch, stop and reset the timer
+	if(pitchAngle > -45 && pitchAngle < 35)
+	{
+		tipTimer->Stop();
+		tipTimer->Reset();
 	}
 
 	return speed;

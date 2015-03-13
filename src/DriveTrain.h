@@ -32,6 +32,10 @@ private:
 	Ultrasonic* sonic;
 	//A timer to be used to keep track of how long the drive train moves
 	Timer* autoTimer;
+	//A timer to be used to track how long the robot has been tipping
+	Timer* tipTimer;
+	//The amount of time the robot will try to correct itself while tipping over to not rip up the carpet
+	const float TIP_CORRECTION_LIMIT = 2.5;
 
 	float lastRampUpAutoOutput;
 

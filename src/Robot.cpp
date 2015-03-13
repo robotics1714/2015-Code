@@ -551,6 +551,7 @@ private:
 
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
+		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
 		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
