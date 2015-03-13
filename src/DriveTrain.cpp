@@ -3,13 +3,14 @@
 
 DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
 		int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
-		int gyroPort, string name) : MORESubsystem(name)
+		int yawGyroPort, int pitchGyroPort, string name) : MORESubsystem(name)
 {
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
-	gyro = new Gyro(gyroPort);
-	gyro->SetDeadband(0.001);
-	gyro->SetSensitivity(GYRO_SENSITIVITY);
+	yawGyro = new Gyro(yawGyroPort);
+	yawGyro->SetDeadband(0.001);
+	yawGyro->SetSensitivity(GYRO_SENSITIVITY);
+	pitchGyro = new Gyro(pitchGyroPort);
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
 	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
@@ -25,7 +26,7 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 DriveTrain::~DriveTrain()
 {
 	delete drive;
-	delete gyro;
+	delete yawGyro;
 	delete leftBumpSwitch;
 	delete rightBumpSwitch;
 	delete autoTimer;
@@ -34,11 +35,13 @@ DriveTrain::~DriveTrain()
 void DriveTrain::Drive(float x, float y, float rot)
 {
 	float rotation = rot;
+	float heading = (yawGyro->GetAngle()*-1)-180;
+	float tiltSpeed = GetAntiTiltSpeed();
 
 	//If the driver wants to turn, make the current angle the current heading and turn that much
 	if(fabs(rot) > 0)
 	{
-		currentHeading = gyro->GetAngle();
+		currentHeading = yawGyro->GetAngle();
 		rotation = rot;
 	}
 	//If the driver does not want to turn, make sure the robot stays and the desired heading
@@ -58,8 +61,17 @@ void DriveTrain::Drive(float x, float y, float rot)
 	}
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
+	//If the robot is tilting, ignore the driver's instructions and un-tilt it
+	if(tiltSpeed != 0)
+	{
+		x = 0;
+		y = tiltSpeed;
+		rotation = 0;
+		heading = 0;//If this was set to the gyro, the robot might move in a funky direction instead of backwards/forwards relative to itself
+	}
+
 	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, (gyro->GetAngle()*-1)-180/*0.0*/);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rotation, heading/*0.0*/);//Commented out gyro bc we don't have one
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 
 	SmartDashboard::PutNumber("Ultrasonic:", sonic->GetRangeInches());
@@ -72,8 +84,8 @@ void DriveTrain::TankDrive(float left, float right)
 
 void DriveTrain::ResetAutoCorrect()
 {
-	gyro->Reset();
-	currentHeading = gyro->GetAngle();
+	yawGyro->Reset();
+	currentHeading = yawGyro->GetAngle();
 }
 
 //param1: magnitude [-1, 1]
@@ -110,6 +122,15 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	double rot = instructions.param3;//Where to robot should rotate to
 	double time = instructions.param4;
 	double turnSpeed = GetTurnSpeed(rot);
+
+	//If the robot it tilting, do no action other than fixing the tilt
+	double tiltSpeed = GetAntiTiltSpeed();
+	if(tiltSpeed != 0)
+	{
+		magnitude = tiltSpeed;
+		dir = 0;//Straight relative to the robot
+		turnSpeed = 0;//Don't want turning to mess anything up
+	}
 
 	//Drive with the specified instructions until the time has passed
 	if((instructions.flags & TIME) == TIME)
@@ -234,7 +255,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 	float turnSpeed = 0.0;
 	float kP = 0.0175;
 	//Put my angle into a range of [-180, 180]
-	float myAngle = gyro->GetAngle();
+	float myAngle = yawGyro->GetAngle();
 	/*while(myAngle >= 180)
 	{
 		myAngle -= 360;
@@ -255,4 +276,28 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 	SmartDashboard::PutNumber("turn speed", turnSpeed);
 
 	return turnSpeed;
+}
+
+//Will return 0 if the robot is in danger of tipping, otherwise return the speed in which the robot should go to avoid tipping
+float DriveTrain::GetAntiTiltSpeed()
+{
+	float speed;
+
+	//If the robot's tilt is equal to or greater than 35 degrees tilting back, drive backwards to correct it
+	if(pitchGyro->GetAngle() >= 35)
+	{
+		speed = -0.75;
+	}
+	//If the robot's tilt is equal to or greater than 45 degrees tilting forwards, drive forwards to correct it
+	else if(pitchGyro->GetAngle() <= -45)
+	{
+		speed = 0.75;
+	}
+	//Otherwise, the robot is in good shape, so don't do anything
+	else
+	{
+		speed = 0;
+	}
+
+	return speed;
 }

@@ -22,7 +22,9 @@ private:
 	//The class that moves the drivetrain
 	RobotDrive* drive;
 	//The gyro to keep track of the robot heading for field centric driving
-	Gyro* gyro;
+	Gyro* yawGyro;
+	//The gyro to keep track of the robot's pitch to make sure it doesn't tip over
+	Gyro* pitchGyro;
 	//The limit switches to tell the robot when it hits the step in autonomous
 	DigitalInput* leftBumpSwitch;
 	DigitalInput* rightBumpSwitch;
@@ -37,6 +39,8 @@ private:
 	float currentHeading;
 
 	float GetTurnSpeed(float setPoint);
+	//Will return 0 if the robot is in danger of tipping, otherwise return the speed in which the robot should go to avoid tipping
+	float GetAntiTiltSpeed();
 public:
 	//Define the auto flags
 	static const int TIME = 1; /**< this autonomous flag will tell the drive-train to drive for a specified time in autonomous */
@@ -60,7 +64,7 @@ public:
 	 */
 	DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, int rearRightPort,
 			int lBumpLimitPort, int rBumpLimitPort, int ultrasonicPingPort, int ultrasonicEchoPort,
-			int gyroPort, string name);
+			int yawGyroPort, int pitchGyroPort, string name);
 	/**
 	 * The Deconstructor for the DriveTrain class.
 	 */
@@ -84,15 +88,19 @@ public:
 
 	//Accessor methods
 	/**
-	 * getGyro returns the value of the gyro at an instance.
+	 * @return returns an instance of the gyro that keeps track of the robot's heading/yaw.
 	 */
-	Gyro* getGyro(){return gyro;}
+	Gyro* getYawGyro(){return yawGyro;}
 	/**
-	 * getAutoTimer returns the value of the AutoTimer at an instance.
+	 * @return returns an instance of the gyro that keeps track of the robot's pitch
+	 */
+	Gyro* getPitchGyro(){return pitchGyro;}
+	/**
+	 * @return returns the value of the AutoTimer at an instance.
 	 */
 	double getAutoTimer(){return autoTimer->Get();}
 	/**
-	 * GetCurrentHeading returns the value of the heading at an instance.
+	 * @return returns the value of the heading at an instance.
 	 */
 	float GetCurrentHeading(){return currentHeading;}
 	/**

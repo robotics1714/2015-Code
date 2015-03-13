@@ -40,7 +40,8 @@
 #define DRIVE_ULTRASONIC_OUT 9
 #define DRIVE_ULTRASONIC_IN 8
 
-#define GYRO_PORT 0
+#define YAW_GYRO_PORT 0
+#define PITCH_GYRO_PORT 2
 
 class Robot: public IterativeRobot
 {
@@ -73,9 +74,9 @@ private:
 
 		drive = new DriveTrain(FRONT_LEFT_DRIVE_PORT, REAR_LEFT_DRIVE_PORT,
 				FRONT_RIGHT_DRIVE_PORT, REAR_RIGHT_DRIVE_PORT, LEFT_BUMP_LIMIT_PORT,
-				RIGHT_BUMP_LIMIT_PORT, DRIVE_ULTRASONIC_OUT, DRIVE_ULTRASONIC_IN, GYRO_PORT, "MECANUM");
+				RIGHT_BUMP_LIMIT_PORT, DRIVE_ULTRASONIC_OUT, DRIVE_ULTRASONIC_IN, YAW_GYRO_PORT, PITCH_GYRO_PORT, "MECANUM");
 
-		drive->getGyro()->Reset();
+		drive->getYawGyro()->Reset();
 
 		//Read in whether this is robot 1 or 2
 		string robotNumber;
@@ -132,7 +133,7 @@ private:
 
 	void AutonomousInit()
 	{
-		drive->getGyro()->Reset();
+		drive->getYawGyro()->Reset();
 		string autoChoice = *(string*)autoChooser->GetSelected();
 
 		//Get how long to wait at the beginning of autonomous from SmartDashboard
@@ -351,7 +352,7 @@ private:
 			}
 		}
 		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
-		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
 	}
 
 	void TeleopInit()
@@ -549,7 +550,7 @@ private:
 		lift->Acquire();
 
 		//Print out information for the driver/debugger
-		SmartDashboard::PutNumber("Gyro", drive->getGyro()->GetAngle());
+		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
 		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
