@@ -8,10 +8,10 @@
 #ifndef SPATULA_H
 #define SPATULA_H
 
-#define SPATULA_CLOSED_1 550
+#define SPATULA_CLOSED_1 500
 //#define SPATULA_OPEN_1 925
 
-#define SPATULA_CLOSED_2 3179//3242
+#define SPATULA_CLOSED_2 500//3242
 //#define SPATULA_OPEN_2 3700
 
 #define CURVE_IN -1.0

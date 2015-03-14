@@ -15,7 +15,7 @@
 
 #define DISTANCE_PER_PULSE 58.75/170757.0 //This is the displacement of the lift divided by the encoder counts it takes to get there
 #define LEVEL_0_R1 405 //Level 0 for robot 1
-#define LEVEL_0 586
+#define LEVEL_0_R2 570
 #define DISTANCE_0_TO_1 1140
 #define DISTANCE_0_TO_2 1640
 #define DISTANCE_0_TO_3 2190

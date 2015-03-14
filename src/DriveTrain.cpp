@@ -10,13 +10,16 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	yawGyro = new Gyro(yawGyroPort);
 	yawGyro->SetDeadband(0.001);
 	yawGyro->SetSensitivity(GYRO_SENSITIVITY);
+	lastLoopHeading = 0;
 	pitchGyro = new Gyro(pitchGyroPort);
+	pitchGyro->SetDeadband(0.005);
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
 	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
 	sonic->SetAutomaticMode(true);
 	autoTimer = new Timer();
 	tipTimer = new Timer();
+	tipTimer->Reset();
 	currentHeading = 0;
 	lastRampUpAutoOutput = 0.25;//Start the ramp up at 25%
 
@@ -63,7 +66,7 @@ void DriveTrain::Drive(float x, float y, float rot)
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
 
 	//If the robot is tilting, ignore the driver's instructions and un-tilt it
-	if(tiltSpeed != 0)
+	if(tiltSpeed > 0)//Basically checking if it equals 0
 	{
 		x = 0;
 		y = tiltSpeed;
@@ -72,7 +75,7 @@ void DriveTrain::Drive(float x, float y, float rot)
 	}
 
 	//Multiply the gyro angle by -1 because it is backwards from the andymark gyro
-	drive->MecanumDrive_Cartesian(x, y, rotation, heading/*0.0*/);//Commented out gyro bc we don't have one
+	drive->MecanumDrive_Cartesian(x, y, rotation, heading/*0.0*/);
 	//drive->MecanumDrive_Polar(0.5, 0, 0);
 
 	SmartDashboard::PutNumber("Ultrasonic:", sonic->GetRangeInches());
@@ -87,6 +90,16 @@ void DriveTrain::ResetAutoCorrect()
 {
 	yawGyro->Reset();
 	currentHeading = yawGyro->GetAngle();
+}
+
+//Because the pitch gyro changed when the robot is rotated, we will use this to check if the robot rotated
+//and reset the pitch gyro if it is
+void DriveTrain::CorrectPitchGyro()
+{
+	if(fabs(lastLoopHeading - yawGyro->GetAngle()) > 2)
+	{
+		pitchGyro->Reset();
+	}
 }
 
 //param1: magnitude [-1, 1]
@@ -287,18 +300,18 @@ float DriveTrain::GetAntiTiltSpeed()
 
 	//If the robot's tilt is equal to or greater than 35 degrees tilting back and we still have hope of correcting
 	//ourselves, drive backwards to correct it
-	if(pitchAngle >= 35 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
-	{
-		speed = -0.75;
-		tipTimer->Start();
-	}
-	//If the robot's tilt is equal to or greater than 45 degrees tilting forwards and we still have hope of correcting
-	//ourselves, drive backwards to correct it
-	else if(pitchAngle <= -45 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
+	if(pitchAngle <= -7.5 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
 	{
 		speed = 0.75;
 		tipTimer->Start();
 	}
+	//If the robot's tilt is equal to or greater than 45 degrees tilting forwards and we still have hope of correcting
+	//ourselves, drive backwards to correct it
+	/*else if(pitchAngle <= -45 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
+	{
+		speed = 0.75;
+		tipTimer->Start();
+	}*/
 	//Otherwise, the robot is in good shape (or we gave up on saving it), so don't do anything
 	else
 	{
@@ -306,7 +319,7 @@ float DriveTrain::GetAntiTiltSpeed()
 	}
 
 	//If the robot is at an untippy pitch, stop and reset the timer
-	if(pitchAngle > -45 && pitchAngle < 35)
+	if(/*pitchAngle > 45 &&*/ pitchAngle > -7.5)
 	{
 		tipTimer->Stop();
 		tipTimer->Reset();

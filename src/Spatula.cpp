@@ -41,7 +41,11 @@ Spatula::~Spatula()
 
 void Spatula::Rotate(float speed)
 {
-	rotaryMotor->Set(speed);
+	//Check for the open limit switch being pressed if we are opening the spatula
+	if(speed > 0 && openLimit->Get() == PRESSED)
+		rotaryMotor->Set(0);
+	else
+		rotaryMotor->Set(speed);
 }
 
 void Spatula::StartMoveUp()
@@ -66,7 +70,7 @@ bool Spatula::MoveUp()
 	if(movingUp)
 	{
 		///Move up if the spatula isn't up already
-		if(enco->GetDistance() > spatClosedVal)
+		if(enco->GetDistance() < spatClosedVal)
 		{
 			rotaryMotor->Set(CURVE_IN);
 		}

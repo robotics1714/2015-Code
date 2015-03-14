@@ -26,12 +26,12 @@ Lift::Lift(int talonDeviceNumber, int liftPotPort, int upperBoundPort, int lower
 	if(robotNumber == "2")
 	{
 		currentLevel = 0;
-		levelPotValues[0] = LEVEL_0;//245;//860;
-		levelPotValues[1] = LEVEL_0 + DISTANCE_0_TO_1;//1385;//2000;
-		levelPotValues[2] = LEVEL_0 + DISTANCE_0_TO_2;//1885;//2500;
-		levelPotValues[3] = LEVEL_0 + DISTANCE_0_TO_3;//2435;//3050;
-		levelPotValues[4] = LEVEL_0 + DISTANCE_0_TO_4;//3520;
-		levelPotValues[5] = LEVEL_0 + DISTANCE_0_TO_5;//3550;
+		levelPotValues[0] = LEVEL_0_R2;//245;//860;
+		levelPotValues[1] = LEVEL_0_R2 + DISTANCE_0_TO_1;//1385;//2000;
+		levelPotValues[2] = LEVEL_0_R2 + DISTANCE_0_TO_2;//1885;//2500;
+		levelPotValues[3] = LEVEL_0_R2 + DISTANCE_0_TO_3;//2435;//3050;
+		levelPotValues[4] = LEVEL_0_R2 + DISTANCE_0_TO_4;//3520;
+		levelPotValues[5] = LEVEL_0_R2 + DISTANCE_0_TO_5;//3550;
 	}
 	//Use these values for the competition bot
 	else

@@ -5,6 +5,7 @@
 #include "SmartDashboard/SmartDashboard.h"
 #include "RobotDrive.h"
 #include "Gyro.h"
+#include "AnalogInput.h"
 #include "DigitalInput.h"
 #include "Ultrasonic.h"
 #include "Timer.h"
@@ -23,6 +24,7 @@ private:
 	RobotDrive* drive;
 	//The gyro to keep track of the robot heading for field centric driving
 	Gyro* yawGyro;
+	float lastLoopHeading;//Keeps track of the heading in our last loop
 	//The gyro to keep track of the robot's pitch to make sure it doesn't tip over
 	Gyro* pitchGyro;
 	//The limit switches to tell the robot when it hits the step in autonomous
@@ -35,7 +37,7 @@ private:
 	//A timer to be used to track how long the robot has been tipping
 	Timer* tipTimer;
 	//The amount of time the robot will try to correct itself while tipping over to not rip up the carpet
-	const float TIP_CORRECTION_LIMIT = 2.5;
+	const float TIP_CORRECTION_LIMIT = 0.75;
 
 	float lastRampUpAutoOutput;
 
@@ -87,8 +89,11 @@ public:
 	 */
 	void TankDrive(float left, float right);
 
-
 	void ResetAutoCorrect();
+
+	//Because the pitch gyro changed when the robot is rotated, we will use this to check if the robot rotated
+	//and reset the pitch gyro if it is
+	void CorrectPitchGyro();
 
 	//Accessor methods
 	/**

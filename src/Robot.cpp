@@ -23,7 +23,7 @@
 #define RAKE_DRAW_IN_LIMIT_PORT 3
 
 #define LIFT_MOTOR_DEVICE_NUMBER 1
-#define LIFT_POT_PORT 1
+#define LIFT_POT_PORT 2
 //#define LIFT_ENCO_A_PORT 1
 //#define LIFT_ENCO_B_PORT 2
 #define LIFT_UPPER_BOUND_PORT 5
@@ -41,7 +41,7 @@
 #define DRIVE_ULTRASONIC_IN 8
 
 #define YAW_GYRO_PORT 0
-#define PITCH_GYRO_PORT 2
+#define PITCH_GYRO_PORT 1
 
 class Robot: public IterativeRobot
 {
@@ -358,6 +358,7 @@ private:
 	void TeleopInit()
 	{
 		//drive->getGyro()->Reset();
+		drive->getPitchGyro()->Reset();
 	}
 
 	void TeleopPeriodic()
@@ -549,9 +550,12 @@ private:
 		lift->MoveToLevel();//This should only be called once per loop because the integral is time sensitive
 		lift->Acquire();
 
+		drive->CorrectPitchGyro();
+
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
+		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
 		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
@@ -562,6 +566,7 @@ private:
 		drive->ResetAutoCorrect();
 		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
+		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
 		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
