@@ -539,6 +539,10 @@ private:
 		{
 			drive->ResetAutoCorrect();
 		}
+		if(xbox->IsYPressed())
+		{
+			drive->ResetAntiTip();
+		}
 
 		drive->Drive(x, y, twist);
 
@@ -550,7 +554,8 @@ private:
 		lift->MoveToLevel();//This should only be called once per loop because the integral is time sensitive
 		lift->Acquire();
 
-		drive->CorrectPitchGyro();
+		//drive->CorrectPitchGyro();
+		drive->UpdateAdjustmentVal();
 
 		//Print out information for the driver/debugger
 		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
@@ -564,6 +569,7 @@ private:
 	void DisabledPeriodic()
 	{
 		drive->ResetAutoCorrect();
+		drive->UpdateAdjustmentVal();
 		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());

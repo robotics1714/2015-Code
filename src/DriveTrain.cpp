@@ -10,9 +10,10 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	yawGyro = new Gyro(yawGyroPort);
 	yawGyro->SetDeadband(0.001);
 	yawGyro->SetSensitivity(GYRO_SENSITIVITY);
-	lastLoopHeading = 0;
+	//lastLoopHeading = 0;
 	pitchGyro = new Gyro(pitchGyroPort);
 	pitchGyro->SetDeadband(0.005);
+	pitchAngleAdjustmentVal = 0;
 	leftBumpSwitch = new DigitalInput(lBumpLimitPort);
 	rightBumpSwitch = new DigitalInput(rBumpLimitPort);
 	sonic = new Ultrasonic(ultrasonicPingPort, ultrasonicEchoPort);
@@ -92,15 +93,20 @@ void DriveTrain::ResetAutoCorrect()
 	currentHeading = yawGyro->GetAngle();
 }
 
+void DriveTrain::ResetAntiTip()
+{
+	pitchAngleAdjustmentVal = pitchGyro->GetAngle();
+}
 //Because the pitch gyro changed when the robot is rotated, we will use this to check if the robot rotated
 //and reset the pitch gyro if it is
-void DriveTrain::CorrectPitchGyro()
+/*void DriveTrain::CorrectPitchGyro()
 {
-	if(fabs(lastLoopHeading - yawGyro->GetAngle()) > 2)
+	if(fabs(lastLoopHeading - yawGyro->GetAngle()) > 0.5)
 	{
 		pitchGyro->Reset();
 	}
-}
+	lastLoopHeading = yawGyro->GetAngle();
+}*/
 
 //param1: magnitude [-1, 1]
 //param2: direction (degrees)
@@ -292,6 +298,14 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 	return turnSpeed;
 }
 
+void DriveTrain::UpdateAdjustmentVal()
+{
+	float difference = pitchGyro->GetAngle() - pitchAngleAdjustmentVal;
+	pitchAngleAdjustmentVal += difference * 0.01;
+	SmartDashboard::PutNumber("Pitch Adjustment Value", pitchAngleAdjustmentVal);
+	SmartDashboard::PutNumber("Will Anti-Tip at:", -7.5 + pitchAngleAdjustmentVal);
+}
+
 //Will return 0 if the robot is in danger of tipping, otherwise return the speed in which the robot should go to avoid tipping
 float DriveTrain::GetAntiTiltSpeed()
 {
@@ -300,7 +314,7 @@ float DriveTrain::GetAntiTiltSpeed()
 
 	//If the robot's tilt is equal to or greater than 35 degrees tilting back and we still have hope of correcting
 	//ourselves, drive backwards to correct it
-	if(pitchAngle <= -7.5 && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
+	if(pitchAngle <= (-7.5 + pitchAngleAdjustmentVal) && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
 	{
 		speed = 0.75;
 		tipTimer->Start();

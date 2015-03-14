@@ -24,9 +24,10 @@ private:
 	RobotDrive* drive;
 	//The gyro to keep track of the robot heading for field centric driving
 	Gyro* yawGyro;
-	float lastLoopHeading;//Keeps track of the heading in our last loop
+	//float lastLoopHeading;//Keeps track of the heading in our last loop
 	//The gyro to keep track of the robot's pitch to make sure it doesn't tip over
 	Gyro* pitchGyro;
+	float pitchAngleAdjustmentVal;
 	//The limit switches to tell the robot when it hits the step in autonomous
 	DigitalInput* leftBumpSwitch;
 	DigitalInput* rightBumpSwitch;
@@ -90,10 +91,12 @@ public:
 	void TankDrive(float left, float right);
 
 	void ResetAutoCorrect();
+	void ResetAntiTip();
 
 	//Because the pitch gyro changed when the robot is rotated, we will use this to check if the robot rotated
 	//and reset the pitch gyro if it is
-	void CorrectPitchGyro();
+	//void CorrectPitchGyro();
+	void UpdateAdjustmentVal();
 
 	//Accessor methods
 	/**
