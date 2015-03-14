@@ -119,7 +119,7 @@ private:
 		//Set up the choices for auto
 		autoChooser = new SendableChooser();
 		autoChooser->AddDefault("Single Rake", new string("SINGLE"));
-		autoChooser->AddObject("Re-Rake", new string("RE"));
+		//autoChooser->AddObject("Re-Rake", new string("RE"));
 		autoChooser->AddObject("Two Containers", new string("TWO"));
 		autoChooser->AddObject("Just Drive", new string("DRIVE"));
 		//Put the chooser on SmartDashboard
@@ -151,13 +151,13 @@ private:
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "First Wait"));
 
 		//lower the rake
-		if(autoChoice != "DRIVE")
+		/*if(autoChoice != "DRIVE")
 		{
 			currentInstr.flags = Rake::AUTO_MOVE_DOWN;
 			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
-		}
+		}*/
 
 		//Second step, drive backwards towards the step until we are 7.5 inches away
 		currentInstr.flags = DriveTrain::ULTRASONIC;
@@ -217,6 +217,12 @@ private:
 		//Choose how long we go for driving back
 		if(autoChoice != "DRIVE")
 		{
+			//Raise the rake
+			currentInstr.flags = Rake::AUTO_MOVE_UP;
+			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(rake, currentInstr, "Aquire Containers"));
+
 			float driveBackTime;
 			float driveBackSpeed;
 			//Two container auto
@@ -264,14 +270,8 @@ private:
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));*/
 
-			//Bring the rake up
-			currentInstr.flags = Rake::AUTO_MOVE_UP;
-			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
-
 			//Do this if we are doing a re-rake
-			if(autoChoice == "RE")
+			/*if(autoChoice == "RE")
 			{
 				//Drive towards the step a little
 				currentInstr.flags = DriveTrain::TIME;
@@ -310,7 +310,7 @@ private:
 				currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
 				//Add the step to the queue
 				autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
-			}
+			}*/
 
 			//Bring in the extensions
 			currentInstr.flags = Rake::AUTO_DRAW_IN;
