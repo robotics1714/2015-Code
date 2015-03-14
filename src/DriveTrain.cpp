@@ -145,7 +145,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 
 	//If the robot it tilting, do no action other than fixing the tilt
 	double tiltSpeed = GetAntiTiltSpeed();
-	if(tiltSpeed != 0)
+	if(tiltSpeed > 0)
 	{
 		magnitude = tiltSpeed;
 		dir = 0;//Straight relative to the robot
@@ -333,7 +333,7 @@ float DriveTrain::GetAntiTiltSpeed()
 	}
 
 	//If the robot is at an untippy pitch, stop and reset the timer
-	if(/*pitchAngle > 45 &&*/ pitchAngle > -7.5)
+	if(/*pitchAngle > 45 &&*/ pitchAngle > (-7.5 + pitchAngleAdjustmentVal))
 	{
 		tipTimer->Stop();
 		tipTimer->Reset();
