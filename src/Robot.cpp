@@ -105,7 +105,7 @@ private:
 
 		spatulaUp = false;
 		spatulaMoveButtonPressed = false;
-		rakeUp = true;
+		rakeUp = false;
 		rakeMoveButtonPressed = false;
 		moveToLevelButtonPressed = false;
 
@@ -351,6 +351,8 @@ private:
 				SmartDashboard::PutString("Done", "Now");
 			}
 		}
+		drive->UpdateAdjustmentVal();
+
 		SmartDashboard::PutNumber("Ultrasonic:", drive->GetUltrasonic()->GetRangeInches());
 		SmartDashboard::PutNumber("Yaw Gyro", drive->getYawGyro()->GetAngle());
 	}

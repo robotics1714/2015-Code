@@ -59,12 +59,12 @@ bool Rake::DrawIn()
 
 void Rake::MoveUp()
 {
-	actuateSolenoid->Set(DoubleSolenoid::kReverse);
+	actuateSolenoid->Set(DoubleSolenoid::kForward);
 }
 
 void Rake::MoveDown()
 {
-	actuateSolenoid->Set(DoubleSolenoid::kForward);
+	actuateSolenoid->Set(DoubleSolenoid::kReverse);
 }
 
 /*void Rake::StartMoveForTime(float speed, float time)
