@@ -556,7 +556,6 @@ private:
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
-		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
 	}
 
@@ -568,7 +567,6 @@ private:
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
-		SmartDashboard::PutNumber("Spat open limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
 	}
 
