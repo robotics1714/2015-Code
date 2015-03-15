@@ -113,8 +113,8 @@ private:
 
 		//leftTwoButtonPressed = false;
 
-		//Move the rake up
-		rake->MoveUp();
+		//Move the rake down
+		rake->MoveDown();
 
 		//Set up the choices for auto
 		autoChooser = new SendableChooser();
@@ -254,7 +254,13 @@ private:
 			currentInstr.param4 = driveBackTime;//Time
 			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
-			//Wait between changing directions
+			//Lower the rake
+			currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(rake, currentInstr, "Release Containers"));
+
+			//Wait before bringing in the extensions
 			currentInstr.flags = 0;
 			currentInstr.param1 = 0.3;
 			currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
