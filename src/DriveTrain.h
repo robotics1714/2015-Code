@@ -38,7 +38,7 @@ private:
 	//A timer to be used to track how long the robot has been tipping
 	Timer* tipTimer;
 	//The amount of time the robot will try to correct itself while tipping over to not rip up the carpet
-	const float TIP_CORRECTION_LIMIT = 0.75;
+	const float TIP_CORRECTION_LIMIT = 1.0;
 
 	float lastRampUpAutoOutput;
 

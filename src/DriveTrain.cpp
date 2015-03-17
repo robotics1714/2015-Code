@@ -147,7 +147,7 @@ int DriveTrain::Auto(AutoInstructions instructions)
 	double tiltSpeed = GetAntiTiltSpeed();
 	if(tiltSpeed > 0)
 	{
-		magnitude = tiltSpeed;
+		magnitude = tiltSpeed * -1;
 		dir = 0;//Straight relative to the robot
 		turnSpeed = 0;//Don't want turning to mess anything up
 	}
