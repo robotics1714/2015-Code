@@ -159,9 +159,9 @@ private:
 			autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
 		}*/
 
-		//Second step, drive backwards towards the step until we are 7.5 inches away
-		currentInstr.flags = DriveTrain::ULTRASONIC;
-		currentInstr.param1 = -1.0;//Go quarter speed in reverse
+		//Second step, drive backwards towards the step until we are10 inches away
+		currentInstr.flags = DriveTrain::ULTRASONIC | DriveTrain::ULTRASONIC_5IN;
+		currentInstr.param1 = -0.8;//Go quarter speed in reverse
 		currentInstr.param2 = 0.0;//Go straight
 		currentInstr.param3 = 0.0;//No rotation
 		currentInstr.param4 = 7.0;//7 second safety timer
@@ -172,7 +172,7 @@ private:
 		currentInstr.param1 = 0;
 		currentInstr.param2 = 0;
 		currentInstr.param3 = 0;
-		currentInstr.param4 = 1.25;
+		currentInstr.param4 = 0.9;
 		autoSteps.push(new AutoStep(drive, currentInstr, "wait and fix itself"));
 		/*currentInstr.flags = 0;
 		currentInstr.param1 = 1;//Wait
@@ -223,20 +223,28 @@ private:
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(rake, currentInstr, "Aquire Containers"));
 
+			//Delay to grab the cans
+			currentInstr.flags = DriveTrain::TIME;
+			currentInstr.param1 = 0;
+			currentInstr.param2 = 0;
+			currentInstr.param3 = 0;
+			currentInstr.param4 = 1;
+			autoSteps.push(new AutoStep(drive, currentInstr, "wait and grab containers"));
+
 			float driveBackTime;
 			float driveBackSpeed;
 			//Two container auto
 			if(autoChoice == "TWO")
 			{
 				//If we are only doing a single rake
-				driveBackTime = 2.5;
+				driveBackTime = 3;
 				driveBackSpeed = 0.37;
 			}
 			//Re-Rake auto
 			else if(autoChoice == "RE")
 			{
 				//If we are doing a re-rake
-				driveBackTime = 2.5;
+				driveBackTime = 3;
 				driveBackSpeed = 0.45;
 			}
 			//Four container single rake
@@ -266,6 +274,14 @@ private:
 			currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+
+			//Drive back to release the containers
+			currentInstr.flags = DriveTrain::TIME;
+			currentInstr.param1 = -0.25;//Speed
+			currentInstr.param2 = 0;//Direction
+			currentInstr.param3 = 0;//Rotation
+			currentInstr.param4 = 1.5;//Time
+			autoSteps.push(new AutoStep(drive, currentInstr, "Release Cans"));
 
 			//fifth step drive forward full speed
 			/*currentInstr.flags = DriveTrain::TIME;

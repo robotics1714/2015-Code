@@ -53,7 +53,9 @@ public:
 	static const int TIME = 1; /**< this autonomous flag will tell the drive-train to drive for a specified time in autonomous */
 	static const int BUMP = 2; /**< this autonomous flag will tell the drive-train to drive for a specified time in autonomous*/
 	static const int ULTRASONIC = 4; /**< this autonomous flag will tell the drive-train to drive until we get close to the step according to the ultrasonic sensor*/
-	static const int RAMP_UP = 8; /**< this autonomous flag will tell the drive-train to ramp up to the desired speed*/
+	static const int ULTRASONIC_5IN = 8;
+	static const int ULTRASONIC_15IN = 16;
+	static const int RAMP_UP = 32; /**< this autonomous flag will tell the drive-train to ramp up to the desired speed*/
 
 	/**
 	 * The constructor for the DriveTrain class.
