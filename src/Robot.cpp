@@ -43,6 +43,11 @@
 #define YAW_GYRO_PORT 0
 #define PITCH_GYRO_PORT 1
 
+//Defines for the keys for the auto choices
+#define AUTO_DRIVE "DRIVE"
+#define AUTO_RELEASE "RELEASE"
+#define AUTO_KEEP "KEEP"
+
 class Robot: public IterativeRobot
 {
 private:
@@ -118,10 +123,10 @@ private:
 
 		//Set up the choices for auto
 		autoChooser = new SendableChooser();
-		autoChooser->AddDefault("Single Rake", new string("SINGLE"));
+		autoChooser->AddDefault("Keep Containers", new string(AUTO_KEEP));
 		//autoChooser->AddObject("Re-Rake", new string("RE"));
-		autoChooser->AddObject("Two Containers", new string("TWO"));
-		autoChooser->AddObject("Just Drive", new string("DRIVE"));
+		autoChooser->AddObject("Release Containers", new string(AUTO_RELEASE));
+		autoChooser->AddObject("Just Drive", new string(AUTO_DRIVE));
 		//Put the chooser on SmartDashboard
 		SmartDashboard::PutData("Auto Selection", autoChooser);
 
@@ -215,7 +220,7 @@ private:
 
 		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
 		//Choose how long we go for driving back
-		if(autoChoice != "DRIVE")
+		if(autoChoice != AUTO_DRIVE)
 		{
 			//Raise the rake
 			currentInstr.flags = Rake::AUTO_MOVE_UP;
@@ -233,25 +238,16 @@ private:
 
 			float driveBackTime;
 			float driveBackSpeed;
-			//Two container auto
-			if(autoChoice == "TWO")
+			//Auto where we release the containers
+			if(autoChoice == AUTO_RELEASE)
 			{
-				//If we are only doing a single rake
-				driveBackTime = 3;
-				driveBackSpeed = 0.37;
+				driveBackTime = 6.0;
+				driveBackSpeed = 0.35;
 			}
-			//Re-Rake auto
-			else if(autoChoice == "RE")
-			{
-				//If we are doing a re-rake
-				driveBackTime = 3;
-				driveBackSpeed = 0.45;
-			}
-			//Four container single rake
+			//Auto where we hole onto the containers
 			else
 			{
-				//If we are only doing a single rake
-				driveBackTime = 6.0;
+				driveBackTime = 5.0;
 				driveBackSpeed = 0.35;
 			}
 			//Fourth step, drive forwards away from the step
@@ -268,78 +264,30 @@ private:
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(rake, currentInstr, "Release Containers"));
 
-			//Wait before bringing in the extensions
-			currentInstr.flags = 0;
-			currentInstr.param1 = 0.3;
-			currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
-
-			//Drive back to release the containers
-			currentInstr.flags = DriveTrain::TIME;
-			currentInstr.param1 = -0.25;//Speed
-			currentInstr.param2 = 0;//Direction
-			currentInstr.param3 = 0;//Rotation
-			currentInstr.param4 = 1.5;//Time
-			autoSteps.push(new AutoStep(drive, currentInstr, "Release Cans"));
-
-			//fifth step drive forward full speed
-			/*currentInstr.flags = DriveTrain::TIME;
-			currentInstr.param1 = 0.7;//Go half speed
-			currentInstr.param2 = 0.0;//Go straight
-			currentInstr.param3 = 0.0;//No rotation
-			currentInstr.param4 = 1.75;//Go for this long
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Time"));*/
-
-			//Do this if we are doing a re-rake
-			/*if(autoChoice == "RE")
+			if(autoChoice == AUTO_RELEASE)
 			{
-				//Drive towards the step a little
+				//Wait before bringing in the extensions
+				currentInstr.flags = 0;
+				currentInstr.param1 = 0.3;
+				currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
+				//Add the step to the queue
+				autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+
+				//Drive back to release the containers
 				currentInstr.flags = DriveTrain::TIME;
 				currentInstr.param1 = -0.25;//Speed
 				currentInstr.param2 = 0;//Direction
 				currentInstr.param3 = 0;//Rotation
-				currentInstr.param4 = 2.7;//3;
-				//Add the step to the queue
-				autoSteps.push(new AutoStep(drive, currentInstr, "Drive forwards for the re-rake"));
+				currentInstr.param4 = 1.5;//Time
+				autoSteps.push(new AutoStep(drive, currentInstr, "Release Cans"));
 
-				//Bring the rake up
-				currentInstr.flags = Rake::AUTO_MOVE_DOWN;
-				currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+				//Bring in the extensions
+				currentInstr.flags = Rake::AUTO_DRAW_IN;
+				currentInstr.param1 = -1;//Speed to draw in
+				currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
 				//Add the step to the queue
-				autoSteps.push(new AutoStep(rake, currentInstr, "Lower Rake"));
-
-				//Wait for it
-				currentInstr.flags = 0;//unused
-				currentInstr.param1 = 1;//Time
-				currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;//Unused
-				//Add the step to the queue
-				autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "WAit after lowering rake"));
-
-				//Drive forwards again
-				currentInstr.flags = DriveTrain::TIME;
-				currentInstr.param1 = 0.3;//Speed
-				currentInstr.param2 = 0;//Direction
-				currentInstr.param3 = 0;//Rotation
-				currentInstr.param4 = 3.25;//2;//Time
-				//Add the step to the queue
-				autoSteps.push(new AutoStep(drive, currentInstr, "Re-Rake"));
-
-				//Raise the rake up again
-				//Bring the rake up
-				currentInstr.flags = Rake::AUTO_MOVE_UP;
-				currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
-				//Add the step to the queue
-				autoSteps.push(new AutoStep(rake, currentInstr, "Raise Rake"));
-			}*/
-
-			//Bring in the extensions
-			currentInstr.flags = Rake::AUTO_DRAW_IN;
-			currentInstr.param1 = -1;//Speed to draw in
-			currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));
+				autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));
+			}
 
 			//Straighten out the robot
 			currentInstr.flags = DriveTrain::TIME;
