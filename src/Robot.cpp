@@ -172,7 +172,7 @@ private:
 		currentInstr.param1 = 0;
 		currentInstr.param2 = 0;
 		currentInstr.param3 = 0;
-		currentInstr.param4 = 0.9;
+		currentInstr.param4 = 0.45;
 		autoSteps.push(new AutoStep(drive, currentInstr, "wait and fix itself"));
 		/*currentInstr.flags = 0;
 		currentInstr.param1 = 1;//Wait
@@ -251,8 +251,8 @@ private:
 			else
 			{
 				//If we are only doing a single rake
-				driveBackTime = 3;
-				driveBackSpeed = 0.45;
+				driveBackTime = 6.0;
+				driveBackSpeed = 0.35;
 			}
 			//Fourth step, drive forwards away from the step
 			currentInstr.flags = DriveTrain::TIME;
@@ -532,6 +532,10 @@ private:
 		if(xbox->IsAPressed())
 		{
 			rake->Move(0.25);
+		}
+		else if(xbox->GetRightTriggerAxis() > 0.5)
+		{
+			rake->Move(-1);
 		}
 		else if(!rake->DrawIn())
 		{
