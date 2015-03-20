@@ -241,13 +241,13 @@ private:
 			//Auto where we release the containers
 			if(autoChoice == AUTO_RELEASE)
 			{
-				driveBackTime = 6.0;
+				driveBackTime = 4.5;
 				driveBackSpeed = 0.35;
 			}
 			//Auto where we hole onto the containers
 			else
 			{
-				driveBackTime = 5.0;
+				driveBackTime = 3.5;
 				driveBackSpeed = 0.35;
 			}
 			//Fourth step, drive forwards away from the step
@@ -325,6 +325,7 @@ private:
 	{
 		//drive->getGyro()->Reset();
 		drive->getPitchGyro()->Reset();
+		drive->ResetAntiTip();
 	}
 
 	void TeleopPeriodic()
@@ -341,9 +342,9 @@ private:
 		{
 			y = stick->GetY();
 		}
-		if((fabs(stick->GetTwist()) > 0.12) && (!stick->GetRawButton(1)))
+		if((fabs(stick->GetTwist()) > 0.3) && (!stick->GetRawButton(1)))
 		{
-			twist = stick->GetTwist()*(0.5);
+			twist = stick->GetTwist()*(0.35);
 		}
 
 		/*//Change between tank and mecanum drive

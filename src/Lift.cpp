@@ -61,6 +61,11 @@ bool Lift::Move(float speed)
 	if( ((speed < 0) && (upperBound->Get() == RELEASED) && (liftPot->GetAverageValue() < levelPotValues[5]))
 			|| ((speed > 0) && lowerBound->Get() == RELEASED) )
 	{
+		//If the robot is close to the top, slow down the speed
+		if(speed < 0 && (liftPot->GetAverageValue() > (levelPotValues[5] - 250)))
+		{
+			speed = -0.5;
+		}
 		liftMotor->Set(speed);
 		return true;
 	}
