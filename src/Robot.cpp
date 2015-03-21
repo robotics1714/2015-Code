@@ -244,10 +244,10 @@ private:
 				driveBackTime = 4.5;
 				driveBackSpeed = 0.35;
 			}
-			//Auto where we hole onto the containers
+			//Auto where we hold onto the containers
 			else
 			{
-				driveBackTime = 3.5;
+				driveBackTime = 4.5;
 				driveBackSpeed = 0.35;
 			}
 			//Fourth step, drive forwards away from the step
@@ -256,6 +256,7 @@ private:
 			currentInstr.param2 = 0.0;//Go straight
 			currentInstr.param3 = 0.0;//No rotation
 			currentInstr.param4 = driveBackTime;//Time
+			//Add the step to the queue
 			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
 			//Lower the rake

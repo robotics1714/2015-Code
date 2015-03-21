@@ -318,7 +318,7 @@ float DriveTrain::GetAntiTiltSpeed()
 
 	//If the robot's tilt is equal to or greater than 35 degrees tilting back and we still have hope of correcting
 	//ourselves, drive backwards to correct it
-	if(pitchAngle <= (-7.5 + pitchAngleAdjustmentVal) && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
+	if(pitchAngle <= (-8.0 + pitchAngleAdjustmentVal) && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
 	{
 		speed = 0.75;
 		tipTimer->Start();
@@ -337,7 +337,7 @@ float DriveTrain::GetAntiTiltSpeed()
 	}
 
 	//If the robot is at an untippy pitch, stop and reset the timer
-	if(/*pitchAngle > 45 &&*/ pitchAngle > (-7.5 + pitchAngleAdjustmentVal))
+	if(/*pitchAngle > 45 &&*/ pitchAngle > (-8.0 + pitchAngleAdjustmentVal))
 	{
 		tipTimer->Stop();
 		tipTimer->Reset();

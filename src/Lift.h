@@ -48,6 +48,7 @@ public:
 	static const int ACQUIRE_GRAB_STATE = 1;/**< Constant for the value of the grab state for the acquire state machine*/
 	static const int ACQUIRE_LIFT_STATE = 2;/**< Constant for the value of the lift state for the acquire state machine*/
 
+	static const int AUTO_LOWER_LIFT = 1;
 	/**
 	 * The constructor for the Lift class
 	 *

@@ -303,6 +303,9 @@ void Lift::SetUpAuto(AutoInstructions instructions)
 
 int Lift::Auto(AutoInstructions instructions)
 {
-	//TODO fill this in
+	if(instructions.flags & AUTO_LOWER_LIFT)
+	{
+		return Move(instructions.param1);
+	}
 	return 0;
 }
