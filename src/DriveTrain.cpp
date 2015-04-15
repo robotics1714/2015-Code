@@ -8,8 +8,8 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
 	yawGyro = new Gyro(yawGyroPort);
-	yawGyro->SetDeadband(0.001);
-	yawGyro->SetSensitivity(GYRO_SENSITIVITY);
+	yawGyro->SetDeadband(0.0001);
+	//yawGyro->SetSensitivity(GYRO_SENSITIVITY);
 	//lastLoopHeading = 0;
 	pitchGyro = new Gyro(pitchGyroPort);
 	pitchGyro->SetDeadband(0.005);
