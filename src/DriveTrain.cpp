@@ -8,8 +8,8 @@ DriveTrain::DriveTrain(int frontLeftPort, int rearLeftPort, int frontRightPort, 
 	//Initialize the member classes of the drive train class
 	drive = new RobotDrive(frontLeftPort, rearLeftPort, frontRightPort, rearRightPort);
 	yawGyro = new Gyro(yawGyroPort);
-	yawGyro->SetDeadband(0.0001);
-	//yawGyro->SetSensitivity(GYRO_SENSITIVITY);
+	yawGyro->SetDeadband(0.005);
+	yawGyro->SetSensitivity(GYRO_SENSITIVITY);
 	//lastLoopHeading = 0;
 	pitchGyro = new Gyro(pitchGyroPort);
 	pitchGyro->SetDeadband(0.005);
@@ -40,7 +40,7 @@ DriveTrain::~DriveTrain()
 void DriveTrain::Drive(float x, float y, float rot)
 {
 	float rotation = rot;
-	float heading = (yawGyro->GetAngle()*-1)-180;
+	float heading = (yawGyro->GetAngle())-180;
 	float tiltSpeed = GetAntiTiltSpeed();
 
 	//If the driver wants to turn, make the current angle the current heading and turn that much
@@ -290,7 +290,7 @@ float DriveTrain::GetTurnSpeed(float setPoint)
 	}*/
 
 	//Calculate the error
-	error = myAngle - setPoint;
+	error = setPoint - myAngle;
 
 	SmartDashboard::PutNumber("myAngle", myAngle);
 	SmartDashboard::PutNumber("Current Heading", currentHeading);
@@ -307,7 +307,7 @@ void DriveTrain::UpdateAdjustmentVal()
 	float difference = pitchGyro->GetAngle() - pitchAngleAdjustmentVal;
 	pitchAngleAdjustmentVal += difference * 0.01;
 	SmartDashboard::PutNumber("Pitch Adjustment Value", pitchAngleAdjustmentVal);
-	SmartDashboard::PutNumber("Will Anti-Tip at:", -7.5 + pitchAngleAdjustmentVal);
+	SmartDashboard::PutNumber("Will Anti-Tip at:", ANTI_TIP_THRESHOLD + pitchAngleAdjustmentVal);
 }
 
 //Will return 0 if the robot is in danger of tipping, otherwise return the speed in which the robot should go to avoid tipping
@@ -318,7 +318,7 @@ float DriveTrain::GetAntiTiltSpeed()
 
 	//If the robot's tilt is equal to or greater than 35 degrees tilting back and we still have hope of correcting
 	//ourselves, drive backwards to correct it
-	if(pitchAngle <= (-8.0 + pitchAngleAdjustmentVal) && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
+	if(pitchAngle <= (ANTI_TIP_THRESHOLD + pitchAngleAdjustmentVal) && tipTimer->Get() <= TIP_CORRECTION_LIMIT)
 	{
 		speed = 0.75;
 		tipTimer->Start();
@@ -337,7 +337,7 @@ float DriveTrain::GetAntiTiltSpeed()
 	}
 
 	//If the robot is at an untippy pitch, stop and reset the timer
-	if(/*pitchAngle > 45 &&*/ pitchAngle > (-8.0 + pitchAngleAdjustmentVal))
+	if(/*pitchAngle > 45 &&*/ pitchAngle > (ANTI_TIP_THRESHOLD + pitchAngleAdjustmentVal))
 	{
 		tipTimer->Stop();
 		tipTimer->Reset();

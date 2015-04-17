@@ -67,6 +67,7 @@ bool Lift::Move(float speed)
 			speed = -0.5;
 		}
 		liftMotor->Set(speed);
+		SmartDashboard::PutString("Is this running?", "Yes it is");
 		return true;
 	}
 	else

@@ -534,7 +534,11 @@ private:
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
+		SmartDashboard::PutNumber("Spat Open Limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Lift Upper Bound Switch", lift->getUpperBound()->Get());
+		SmartDashboard::PutNumber("Lift Lower Bound", lift->getLowerBound()->Get());
+		SmartDashboard::PutNumber("Rake Prox Switch", rake->getDrawInSwitch()->Get());
 	}
 
 	void DisabledPeriodic()
@@ -545,7 +549,11 @@ private:
 		SmartDashboard::PutNumber("Pitch Gyro", drive->getPitchGyro()->GetAngle());
 		SmartDashboard::PutNumber("Spatula Open Switch", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Spat Pos", spatula->GetEnco()->GetDistance());
+		SmartDashboard::PutNumber("Spat Open Limit", spatula->GetOpenLimit()->Get());
 		SmartDashboard::PutNumber("Lift Pos", lift->GetPot()->GetAverageValue());
+		SmartDashboard::PutNumber("Lift Upper Bound Switch", lift->getUpperBound()->Get());
+		SmartDashboard::PutNumber("Lift Lower Bound", lift->getLowerBound()->Get());
+		SmartDashboard::PutNumber("Rake Prox Switch", rake->getDrawInSwitch()->Get());
 	}
 
 	void TestPeriodic()
