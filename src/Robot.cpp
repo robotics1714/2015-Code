@@ -554,6 +554,8 @@ private:
 		SmartDashboard::PutNumber("Lift Upper Bound Switch", lift->getUpperBound()->Get());
 		SmartDashboard::PutNumber("Lift Lower Bound", lift->getLowerBound()->Get());
 		SmartDashboard::PutNumber("Rake Prox Switch", rake->getDrawInSwitch()->Get());
+		SmartDashboard::PutNumber("Left bumb", drive->GetLeftLimit()->Get());
+		SmartDashboard::PutNumber("Right Bumb Switch", drive->GetRightLimit()->Get());
 	}
 
 	void TestPeriodic()
