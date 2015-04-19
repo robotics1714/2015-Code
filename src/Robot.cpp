@@ -110,7 +110,7 @@ private:
 
 		spatulaUp = false;
 		spatulaMoveButtonPressed = false;
-		rakeUp = false;
+		rakeUp = true;
 		rakeMoveButtonPressed = false;
 		moveToLevelButtonPressed = false;
 
@@ -259,14 +259,14 @@ private:
 			//Add the step to the queue
 			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
 
-			//Lower the rake
-			currentInstr.flags = Rake::AUTO_MOVE_DOWN;
-			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(rake, currentInstr, "Release Containers"));
-
 			if(autoChoice == AUTO_RELEASE)
 			{
+				//Lower the rake
+				currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+				currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+				//Add the step to the queue
+				autoSteps.push(new AutoStep(rake, currentInstr, "Release Containers"));
+
 				//Wait before bringing in the extensions
 				currentInstr.flags = 0;
 				currentInstr.param1 = 0.3;
