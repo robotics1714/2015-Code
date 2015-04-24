@@ -8,7 +8,7 @@
 #ifndef SPATULA_H
 #define SPATULA_H
 
-#define SPATULA_CLOSED_1 500
+#define SPATULA_CLOSED_1 380
 //#define SPATULA_OPEN_1 925
 
 #define SPATULA_CLOSED_2 400//3242

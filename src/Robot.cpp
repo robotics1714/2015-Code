@@ -64,6 +64,8 @@ private:
 	bool rakeUp;
 	bool rakeMoveButtonPressed;
 	bool moveToLevelButtonPressed;
+
+	bool autoStepsAdded;
 	//bool leftTwoButtonPressed;
 
 	//For autonomous
@@ -113,6 +115,7 @@ private:
 		rakeUp = true;
 		rakeMoveButtonPressed = false;
 		moveToLevelButtonPressed = false;
+		autoStepsAdded = false;
 
 		SmartDashboard::PutNumber("Auto Delay", 0.0);
 
@@ -141,22 +144,24 @@ private:
 		drive->getYawGyro()->Reset();
 		string autoChoice = *(string*)autoChooser->GetSelected();
 
-		//Get how long to wait at the beginning of autonomous from SmartDashboard
-		double wait = SmartDashboard::GetNumber("Auto Delay");
+		if(!autoStepsAdded)
+		{
+			//Get how long to wait at the beginning of autonomous from SmartDashboard
+			double wait = SmartDashboard::GetNumber("Auto Delay");
 
-		AutoInstructions currentInstr;
+			AutoInstructions currentInstr;
 
-		//First step, wait for however long the drivers decided before the match
-		currentInstr.flags = 0;//AutoTimer does not have any flags
-		currentInstr.param1 = wait;//How long to wait
-		currentInstr.param2 = 0;//unused
-		currentInstr.param3 = 0;//unused
-		currentInstr.param4 = 0;//unused
-		//Add the step to the queue
-		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "First Wait"));
+			//First step, wait for however long the drivers decided before the match
+			currentInstr.flags = 0;//AutoTimer does not have any flags
+			currentInstr.param1 = wait;//How long to wait
+			currentInstr.param2 = 0;//unused
+			currentInstr.param3 = 0;//unused
+			currentInstr.param4 = 0;//unused
+			//Add the step to the queue
+			autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "First Wait"));
 
-		//lower the rake
-		/*if(autoChoice != "DRIVE")
+			//lower the rake
+			/*if(autoChoice != "DRIVE")
 		{
 			currentInstr.flags = Rake::AUTO_MOVE_DOWN;
 			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
@@ -164,22 +169,22 @@ private:
 			autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
 		}*/
 
-		//Second step, drive backwards towards the step until we are10 inches away
-		currentInstr.flags = DriveTrain::ULTRASONIC | DriveTrain::ULTRASONIC_5IN;
-		currentInstr.param1 = -0.8;//Go quarter speed in reverse
-		currentInstr.param2 = 0.0;//Go straight
-		currentInstr.param3 = 0.0;//No rotation
-		currentInstr.param4 = 7.0;//7 second safety timer
-		autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
+			//Second step, drive backwards towards the step until we are10 inches away
+			currentInstr.flags = DriveTrain::ULTRASONIC | DriveTrain::ULTRASONIC_5IN;
+			currentInstr.param1 = -0.8;//Go quarter speed in reverse
+			currentInstr.param2 = 0.0;//Go straight
+			currentInstr.param3 = 0.0;//No rotation
+			currentInstr.param4 = 7.0;//7 second safety timer
+			autoSteps.push(new AutoStep(drive, currentInstr, "Don't hit the step"));
 
-		//Wait a bit and have the robot center itself
-		currentInstr.flags = DriveTrain::TIME;
-		currentInstr.param1 = 0;
-		currentInstr.param2 = 0;
-		currentInstr.param3 = 0;
-		currentInstr.param4 = 0.45;
-		autoSteps.push(new AutoStep(drive, currentInstr, "wait and fix itself"));
-		/*currentInstr.flags = 0;
+			//Wait a bit and have the robot center itself
+			currentInstr.flags = DriveTrain::TIME;
+			currentInstr.param1 = 0;
+			currentInstr.param2 = 0;
+			currentInstr.param3 = 0;
+			currentInstr.param4 = 0.45;
+			autoSteps.push(new AutoStep(drive, currentInstr, "wait and fix itself"));
+			/*currentInstr.flags = 0;
 		currentInstr.param1 = 1;//Wait
 		currentInstr.param2 = 0;//unused
 		currentInstr.param3 = 0;//unused
@@ -187,8 +192,8 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));*/
 
-		//Drop the rake
-		/*currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+			//Drop the rake
+			/*currentInstr.flags = Rake::AUTO_MOVE_DOWN;
 		currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(rake, currentInstr, "Drop Rake"));
@@ -199,9 +204,9 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));*/
 
-		//THIS IS THE DRIVE AWAY SEQUENCE THAT HAS A BURST OF SPEED AND THEN RAMPS UP THE SPEED
-		//Have a short burst of speed to dislodge the cantainers
-		/*currentInstr.flags = DriveTrain::TIME;
+			//THIS IS THE DRIVE AWAY SEQUENCE THAT HAS A BURST OF SPEED AND THEN RAMPS UP THE SPEED
+			//Have a short burst of speed to dislodge the cantainers
+			/*currentInstr.flags = DriveTrain::TIME;
 		currentInstr.param1 = 0.5;//Speed
 		currentInstr.param2 = 0;//Direction
 		currentInstr.param3 = 0;//Rotation
@@ -218,86 +223,89 @@ private:
 		//Add the step to the queue
 		autoSteps.push(new AutoStep(drive, currentInstr, "Ramp Up"));*/
 
-		//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
-		//Choose how long we go for driving back
-		if(autoChoice != AUTO_DRIVE)
-		{
-			//Raise the rake
-			currentInstr.flags = Rake::AUTO_MOVE_UP;
-			currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(rake, currentInstr, "Aquire Containers"));
-
-			//Delay to grab the cans
-			currentInstr.flags = DriveTrain::TIME;
-			currentInstr.param1 = 0;
-			currentInstr.param2 = 0;
-			currentInstr.param3 = 0;
-			currentInstr.param4 = 1;
-			autoSteps.push(new AutoStep(drive, currentInstr, "wait and grab containers"));
-
-			float driveBackTime;
-			float driveBackSpeed;
-			//Auto where we release the containers
-			if(autoChoice == AUTO_RELEASE)
+			//THIS IS THE KNOWN DRIVE AWAY STEP THAT DOES NOT (COMPLETELY) TIP OVER THE ROBOT
+			//Choose how long we go for driving back
+			if(autoChoice != AUTO_DRIVE)
 			{
-				driveBackTime = 4.5;
-				driveBackSpeed = 0.35;
-			}
-			//Auto where we hold onto the containers
-			else
-			{
-				driveBackTime = 4.5;
-				driveBackSpeed = 0.35;
-			}
-			//Fourth step, drive forwards away from the step
-			currentInstr.flags = DriveTrain::TIME;
-			currentInstr.param1 = driveBackSpeed;//Go half speed
-			currentInstr.param2 = 0.0;//Go straight
-			currentInstr.param3 = 0.0;//No rotation
-			currentInstr.param4 = driveBackTime;//Time
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
-
-			if(autoChoice == AUTO_RELEASE)
-			{
-				//Lower the rake
-				currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+				//Raise the rake
+				currentInstr.flags = Rake::AUTO_MOVE_UP;
 				currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
 				//Add the step to the queue
-				autoSteps.push(new AutoStep(rake, currentInstr, "Release Containers"));
+				autoSteps.push(new AutoStep(rake, currentInstr, "Aquire Containers"));
 
-				//Wait before bringing in the extensions
-				currentInstr.flags = 0;
-				currentInstr.param1 = 0.3;
-				currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
-				//Add the step to the queue
-				autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
-
-				//Drive back to release the containers
+				//Delay to grab the cans
 				currentInstr.flags = DriveTrain::TIME;
-				currentInstr.param1 = -0.25;//Speed
+				currentInstr.param1 = 0;
+				currentInstr.param2 = 0;
+				currentInstr.param3 = 0;
+				currentInstr.param4 = 1;
+				autoSteps.push(new AutoStep(drive, currentInstr, "wait and grab containers"));
+
+				float driveBackTime;
+				float driveBackSpeed;
+				//Auto where we release the containers
+				if(autoChoice == AUTO_RELEASE)
+				{
+					driveBackTime = 4.5;
+					driveBackSpeed = 0.35;
+				}
+				//Auto where we hold onto the containers
+				else
+				{
+					driveBackTime = 4.5;
+					driveBackSpeed = 0.35;
+				}
+				//Fourth step, drive forwards away from the step
+				currentInstr.flags = DriveTrain::TIME;
+				currentInstr.param1 = driveBackSpeed;//Go half speed
+				currentInstr.param2 = 0.0;//Go straight
+				currentInstr.param3 = 0.0;//No rotation
+				currentInstr.param4 = driveBackTime;//Time
+				//Add the step to the queue
+				autoSteps.push(new AutoStep(drive, currentInstr, "Drive Back Ultra"));
+
+				if(autoChoice == AUTO_RELEASE)
+				{
+					//Lower the rake
+					currentInstr.flags = Rake::AUTO_MOVE_DOWN;
+					currentInstr.param1 = currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0.0;//Unused
+					//Add the step to the queue
+					autoSteps.push(new AutoStep(rake, currentInstr, "Release Containers"));
+
+					//Wait before bringing in the extensions
+					currentInstr.flags = 0;
+					currentInstr.param1 = 0.3;
+					currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
+					//Add the step to the queue
+					autoSteps.push(new AutoStep(new AutoTimer("Timer"), currentInstr, "Wait"));
+
+					//Drive back to release the containers
+					currentInstr.flags = DriveTrain::TIME;
+					currentInstr.param1 = -0.25;//Speed
+					currentInstr.param2 = 0;//Direction
+					currentInstr.param3 = 0;//Rotation
+					currentInstr.param4 = 1.5;//Time
+					autoSteps.push(new AutoStep(drive, currentInstr, "Release Cans"));
+
+					//Bring in the extensions
+					currentInstr.flags = Rake::AUTO_DRAW_IN;
+					currentInstr.param1 = -1;//Speed to draw in
+					currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
+					//Add the step to the queue
+					autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));
+				}
+
+				//Straighten out the robot
+				currentInstr.flags = DriveTrain::TIME;
+				currentInstr.param1 = 0;//Speed
 				currentInstr.param2 = 0;//Direction
 				currentInstr.param3 = 0;//Rotation
-				currentInstr.param4 = 1.5;//Time
-				autoSteps.push(new AutoStep(drive, currentInstr, "Release Cans"));
-
-				//Bring in the extensions
-				currentInstr.flags = Rake::AUTO_DRAW_IN;
-				currentInstr.param1 = -1;//Speed to draw in
-				currentInstr.param2 = currentInstr.param3 = currentInstr.param4 = 0;
+				currentInstr.param4 = 0.75;//Time
 				//Add the step to the queue
-				autoSteps.push(new AutoStep(rake, currentInstr, "Draw in extensions"));
+				autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));
 			}
 
-			//Straighten out the robot
-			currentInstr.flags = DriveTrain::TIME;
-			currentInstr.param1 = 0;//Speed
-			currentInstr.param2 = 0;//Direction
-			currentInstr.param3 = 0;//Rotation
-			currentInstr.param4 = 0.75;//Time
-			//Add the step to the queue
-			autoSteps.push(new AutoStep(drive, currentInstr, "Straighten robot"));
+			autoStepsAdded = true;
 		}
 	}
 

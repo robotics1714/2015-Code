@@ -39,7 +39,7 @@ private:
 	Timer* tipTimer;
 	//The amount of time the robot will try to correct itself while tipping over to not rip up the carpet
 	const float TIP_CORRECTION_LIMIT = 0.75;
-	const float ANTI_TIP_THRESHOLD = -25.0;//The angle at which the robot begins to anti tip
+	const float ANTI_TIP_THRESHOLD = -30.0;//The angle at which the robot begins to anti tip
 
 	float lastRampUpAutoOutput;
 
